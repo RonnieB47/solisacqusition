@@ -25,7 +25,7 @@ import {
   Send,
   Settings2,
   ShieldCheck,
-  ShuffleIcon,
+  Shuffle,
   Target,
   Timer,
   UserCheck,
@@ -453,7 +453,7 @@ function WhoWeWorkWith() {
     { icon: Timer, title: "Response times are too slow", desc: "By the time someone replies, the lead has already moved on." },
     { icon: LayoutGrid, title: "No clear operational process", desc: "Every team member handles things a slightly different way." },
     { icon: Eye, title: "No visibility into performance", desc: "You can't see what's actually working, or where revenue leaks out." },
-    { icon: ShuffleIcon, title: "Disconnected tools everywhere", desc: "Constantly switching between platforms that don't talk to each other." },
+    { icon: Shuffle, title: "Disconnected tools everywhere", desc: "Constantly switching between platforms that don't talk to each other." },
     { icon: Repeat, title: "The same tasks, every day", desc: "Repetitive work that never gets documented, automated, or standardised." },
     { icon: GaugeCircle, title: "Growth is capped by operations", desc: "More revenue just means more chaos, not a more scalable business." },
   ];
