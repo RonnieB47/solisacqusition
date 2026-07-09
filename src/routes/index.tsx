@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, type Variants } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Activity,
   ArrowRight,
@@ -8,16 +8,15 @@ import {
   BarChart3,
   Bell,
   BookOpen,
-  Building2,
   CalendarCheck,
   CheckCircle2,
   ClipboardCheck,
   Clock,
   Compass,
+  Eye,
   FileText,
   GaugeCircle,
-  Heart,
-  Home,
+  LayoutGrid,
   LineChart,
   MessageSquare,
   Plug,
@@ -26,8 +25,7 @@ import {
   Send,
   Settings2,
   ShieldCheck,
-  Sparkles,
-  Stethoscope,
+  ShuffleIcon,
   Target,
   Timer,
   UserCheck,
@@ -87,8 +85,8 @@ function Landing() {
         <Hero />
         <Problem />
         <WhoWeWorkWith />
-        <WhatWeBuild />
         <RevenueOps />
+        <WhatWeBuild />
         <CustomerJourney />
         <HowItWorks />
         <WhySolis />
@@ -101,38 +99,86 @@ function Landing() {
 }
 
 /* ---------- Nav ---------- */
+const NAV_LINKS = [
+  { label: "Platform", id: "platform" },
+  { label: "Services", id: "services" },
+  { label: "How It Works", id: "how" },
+  { label: "Contact", id: "contact" },
+];
+
+function smoothScrollTo(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY - 72;
+  window.scrollTo({ top: y, behavior: "smooth" });
+}
+
 function Nav() {
-  const links = [
-    { label: "Platform", href: "#platform" },
-    { label: "Services", href: "#services" },
-    { label: "How It Works", href: "#how" },
-    { label: "Contact", href: "#contact" },
-  ];
+  const [active, setActive] = useState<string>("platform");
+
+  useEffect(() => {
+    const ids = NAV_LINKS.map((l) => l.id);
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b border-hairline/70 bg-background/80 backdrop-blur-md">
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-6 px-6 py-4">
-        <a href="#" className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="flex items-center gap-2"
+        >
           <LogoMark />
           <span className="text-[15px] font-semibold tracking-tight">Solis</span>
-        </a>
+        </button>
         <nav className="hidden justify-center gap-8 md:flex">
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {l.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((l) => {
+            const isActive = active === l.id;
+            return (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => smoothScrollTo(l.id)}
+                className={`relative text-sm transition-colors ${
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {l.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute -bottom-1.5 left-0 right-0 mx-auto h-[2px] w-6 rounded-full bg-primary"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </nav>
-        <a
-          href="#contact"
+        <button
+          type="button"
+          onClick={() => smoothScrollTo("contact")}
           className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset] transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/20"
         >
           Book a Call
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </a>
+        </button>
       </div>
     </header>
   );
@@ -162,31 +208,34 @@ function Hero() {
         </Reveal>
         <Reveal delay={0.05}>
           <h1 className="max-w-4xl text-balance text-center text-5xl font-semibold leading-[1.02] tracking-tight md:text-6xl lg:text-[76px]">
-            The operational backend for{" "}
-            <span className="text-primary">service businesses.</span>
+            The systems behind service{" "}
+            <span className="text-primary">businesses that scale.</span>
           </h1>
         </Reveal>
         <Reveal delay={0.15}>
           <p className="mt-8 max-w-2xl text-center text-[17px] leading-relaxed text-muted-foreground md:text-[19px]">
-            Solis builds the systems that capture every enquiry, book more appointments,
-            and give you complete visibility into how your business actually runs.
+            Solis builds the operational infrastructure that removes bottlenecks, automates the
+            repetitive work slowing your team down, and gives you complete visibility into how your
+            business actually runs.
           </p>
         </Reveal>
         <Reveal delay={0.25}>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="#contact"
+            <button
+              type="button"
+              onClick={() => smoothScrollTo("contact")}
               className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
             >
               Book a Call
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
-            <a
-              href="#platform"
+            </button>
+            <button
+              type="button"
+              onClick={() => smoothScrollTo("platform")}
               className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               See how it works
-            </a>
+            </button>
           </div>
         </Reveal>
 
@@ -223,7 +272,6 @@ function DashboardIllustration() {
     <div className="relative">
       <div className="absolute -inset-8 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/15 via-transparent to-transparent blur-3xl" />
       <div className="rounded-2xl border border-hairline bg-surface shadow-[0_40px_100px_-40px_rgba(0,0,0,0.35)]">
-        {/* window chrome */}
         <div className="flex items-center justify-between border-b border-hairline px-5 py-3">
           <div className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
@@ -343,17 +391,17 @@ function Problem() {
     {
       icon: Clock,
       title: "Leads go cold",
-      desc: "Enquiries aren't answered fast enough and prospects book with a competitor.",
+      desc: "Enquiries aren't answered fast enough and prospects move on before you respond.",
     },
     {
       icon: GaugeCircle,
       title: "No visibility",
-      desc: "You can't see what's driving bookings, what's stalling, or where revenue leaks.",
+      desc: "You can't see what's driving revenue, what's stalling, or where the leaks are.",
     },
     {
       icon: Settings2,
       title: "Manual admin",
-      desc: "Reminders, follow-ups, and reporting eat the hours your team should spend on customers.",
+      desc: "Follow-ups, reminders, and reporting eat the hours your team should spend on customers.",
     },
   ];
   return (
@@ -399,12 +447,25 @@ function Problem() {
 
 /* ---------- Who We Work With ---------- */
 function WhoWeWorkWith() {
-  const industries = [
-    { icon: Sparkles, title: "Medical Aesthetics", desc: "Med spas, injectors, and cosmetic clinics." },
-    { icon: Stethoscope, title: "Dental & Health Clinics", desc: "Practices managing high-volume patient bookings." },
-    { icon: Heart, title: "Wellness Practices", desc: "Chiropractic, physio, and recovery studios." },
-    { icon: Home, title: "Home Services", desc: "In-home visits, quotes, and recurring service work." },
-    { icon: Building2, title: "Professional Services", desc: "Consultancies and appointment-based advisory firms." },
+  const pains = [
+    { icon: Clock, title: "Manual admin is eating the day", desc: "Hours lost every week to work that should run itself." },
+    { icon: Zap, title: "Leads slip through the cracks", desc: "Enquiries go unanswered or fall out of the pipeline entirely." },
+    { icon: Timer, title: "Response times are too slow", desc: "By the time someone replies, the lead has already moved on." },
+    { icon: LayoutGrid, title: "No clear operational process", desc: "Every team member handles things a slightly different way." },
+    { icon: Eye, title: "No visibility into performance", desc: "You can't see what's actually working, or where revenue leaks out." },
+    { icon: ShuffleIcon, title: "Disconnected tools everywhere", desc: "Constantly switching between platforms that don't talk to each other." },
+    { icon: Repeat, title: "The same tasks, every day", desc: "Repetitive work that never gets documented, automated, or standardised." },
+    { icon: GaugeCircle, title: "Growth is capped by operations", desc: "More revenue just means more chaos, not a more scalable business." },
+  ];
+  const audience = [
+    "Marketing Agencies",
+    "Creative Agencies",
+    "Med Spas",
+    "Clinics",
+    "Consultants",
+    "Coaches",
+    "Professional Services",
+    "Home Services",
   ];
   return (
     <section className="border-t border-hairline bg-surface/40">
@@ -412,10 +473,10 @@ function WhoWeWorkWith() {
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Who we work with</div>
           <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
-            Built for appointment-based businesses.
+            Built for growing service businesses.
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
-            If your revenue depends on booked appointments, Solis fits the way you already work.
+            If any of this sounds familiar, you're exactly who we build for.
           </p>
         </Reveal>
 
@@ -424,9 +485,9 @@ function WhoWeWorkWith() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5"
+          className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {industries.map((it) => (
+          {pains.map((it) => (
             <motion.div
               key={it.title}
               variants={fadeUp}
@@ -435,11 +496,27 @@ function WhoWeWorkWith() {
               <div className="grid h-10 w-10 place-items-center rounded-lg border border-hairline bg-surface text-primary transition-colors group-hover:border-primary/30">
                 <it.icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-5 text-base font-semibold tracking-tight">{it.title}</h3>
+              <h3 className="mt-5 text-[15px] font-semibold tracking-tight">{it.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{it.desc}</p>
             </motion.div>
           ))}
         </motion.div>
+
+        <Reveal delay={0.1}>
+          <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-hairline pt-8">
+            <span className="mr-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Industries
+            </span>
+            {audience.map((a) => (
+              <span
+                key={a}
+                className="rounded-full border border-hairline bg-background px-3 py-1 text-xs text-foreground/80"
+              >
+                {a}
+              </span>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -489,7 +566,7 @@ function WhatWeBuild() {
     },
   ];
   return (
-    <section id="services" className="border-t border-hairline">
+    <section id="services" className="scroll-mt-20 border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">What we build</div>
@@ -553,17 +630,10 @@ function SpeedIllo() {
       <circle cx="46" cy="55" r="4" fill="var(--primary)" />
       <rect x="58" y="49" width="80" height="4" rx="2" fill="var(--foreground)" opacity="0.6" />
       <rect x="58" y="58" width="50" height="3" rx="1.5" fill="var(--foreground)" opacity="0.25" />
-
-      <path
-        d="M160 55 L240 55"
-        stroke="var(--primary)"
-        strokeWidth="1.5"
-        strokeDasharray="4 4"
-      />
+      <path d="M160 55 L240 55" stroke="var(--primary)" strokeWidth="1.5" strokeDasharray="4 4" />
       <circle cx="240" cy="55" r="18" fill="var(--primary)" opacity="0.12" />
       <circle cx="240" cy="55" r="10" fill="var(--primary)" />
       <path d="M235 55 L239 59 L246 51" stroke="white" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-
       <rect x="270" y="90" width="110" height="46" rx="8" fill="var(--background)" stroke="var(--hairline)" />
       <rect x="280" y="100" width="60" height="4" rx="2" fill="var(--foreground)" opacity="0.6" />
       <rect x="280" y="110" width="90" height="3" rx="1.5" fill="var(--foreground)" opacity="0.2" />
@@ -593,9 +663,7 @@ function WorkflowIllo() {
         [200, 110],
         [335, 80],
       ].map(([x, y], i) => (
-        <g key={i}>
-          <circle cx={x} cy={y} r="4" fill="var(--primary)" />
-        </g>
+        <circle key={i} cx={x} cy={y} r="4" fill="var(--primary)" />
       ))}
       <text x="65" y="83" textAnchor="middle" fontSize="9" fill="var(--foreground)" opacity="0.7">
         Enquiry
@@ -647,7 +715,7 @@ function RevenueOps() {
     { icon: Repeat, title: "Improve", desc: "Continuous refinement as your team and volume grow." },
   ];
   return (
-    <section id="platform" className="border-t border-hairline bg-surface/40">
+    <section id="platform" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Revenue operations</div>
@@ -765,98 +833,184 @@ function CustomerJourney() {
   );
 }
 
-/* ---------- How It Works ---------- */
+/* ---------- How It Works (Working Together Timeline) ---------- */
 function HowItWorks() {
   const stages = [
     {
+      when: "Week 1",
       icon: Compass,
-      title: "Understand",
-      desc: "We audit your enquiry flow, booking process, and operational bottlenecks.",
+      title: "Discovery & Systems Audit",
+      desc: "We map how your business actually operates today.",
+      bullets: [
+        "Understand your business",
+        "Map your existing processes",
+        "Identify bottlenecks",
+        "Define project roadmap",
+      ],
     },
     {
+      when: "Week 2",
       icon: Plug,
-      title: "Design",
-      desc: "We build the workflows, automations, and reporting around your business.",
+      title: "System Design",
+      desc: "We design the operational architecture around your team.",
+      bullets: [
+        "Design automations",
+        "Build backend workflows",
+        "Configure reporting",
+        "Plan integrations",
+      ],
     },
     {
+      when: "Launch Week",
       icon: Rocket,
-      title: "Deploy",
-      desc: "Everything is integrated, tested, and documented before handover.",
+      title: "Implementation",
+      desc: "We deploy the system and walk your team through every part.",
+      bullets: [
+        "Deploy automations",
+        "Connect existing software",
+        "Test every workflow",
+        "Team walkthrough",
+      ],
     },
     {
+      when: "Ongoing",
       icon: Activity,
-      title: "Optimise",
-      desc: "We keep refining and improving the system as your business grows.",
+      title: "Optimisation & Support",
+      desc: "We keep refining the system as your business grows.",
+      bullets: [
+        "Performance reviews",
+        "New workflow improvements",
+        "Reporting refinements",
+        "Continuous optimisation",
+      ],
     },
   ];
   const [active, setActive] = useState(0);
 
   return (
-    <section id="how" className="border-t border-hairline bg-surface/40">
+    <section id="how" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
-          <div className="text-xs uppercase tracking-[0.2em] text-primary">How it works</div>
+          <div className="text-xs uppercase tracking-[0.2em] text-primary">Working together</div>
           <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
-            A four-stage engagement.
+            What working with Solis looks like.
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
-            A repeatable process for shipping operational infrastructure that lasts.
+            A clear, repeatable engagement — from first conversation to a live system your team
+            actually runs on.
           </p>
         </Reveal>
 
-        <div className="relative mt-16">
-          <div className="absolute left-0 right-0 top-6 hidden h-px bg-hairline md:block" />
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: (active + 1) / stages.length }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transformOrigin: "left" }}
-            className="absolute left-0 right-0 top-6 hidden h-px bg-primary md:block"
-          />
-
-          <div className="grid gap-6 md:grid-cols-4 md:gap-4">
-            {stages.map((s, i) => {
-              const isActive = i <= active;
-              return (
-                <motion.button
-                  key={s.title}
-                  onMouseEnter={() => setActive(i)}
-                  onFocus={() => setActive(i)}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className="group relative text-left"
-                >
-                  <div className="flex items-center gap-3 md:block">
-                    <div
-                      className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border transition-all ${
-                        isActive
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-hairline bg-background text-muted-foreground"
-                      }`}
+        <div className="mt-16 grid gap-10 lg:grid-cols-[220px_1fr]">
+          {/* Stage rail */}
+          <div className="relative">
+            <div className="absolute left-[19px] top-2 bottom-2 hidden w-px bg-hairline lg:block" />
+            <motion.div
+              key={active}
+              initial={{ height: 0 }}
+              animate={{ height: `${((active + 1) / stages.length) * 100}%` }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute left-[19px] top-2 hidden w-px bg-primary lg:block"
+            />
+            <ul className="flex gap-3 overflow-x-auto lg:flex-col lg:gap-6 lg:overflow-visible">
+              {stages.map((s, i) => {
+                const isActive = i === active;
+                const isPassed = i <= active;
+                return (
+                  <li key={s.when}>
+                    <button
+                      type="button"
+                      onClick={() => setActive(i)}
+                      onMouseEnter={() => setActive(i)}
+                      className="group relative flex items-center gap-3 whitespace-nowrap text-left"
                     >
-                      <span className="text-sm font-semibold">0{i + 1}</span>
-                    </div>
-                  </div>
-                  <div
-                    className={`mt-5 rounded-xl border p-5 transition-all ${
-                      isActive
-                        ? "border-foreground/15 bg-background shadow-sm"
-                        : "border-hairline bg-background/60"
-                    } group-hover:-translate-y-0.5`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <s.icon className="h-4 w-4 text-primary" />
-                      <h3 className="text-base font-semibold tracking-tight">{s.title}</h3>
-                    </div>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
-                  </div>
-                </motion.button>
-              );
-            })}
+                      <span
+                        className={`relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full border text-xs font-semibold transition-all ${
+                          isPassed
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-hairline bg-background text-muted-foreground"
+                        }`}
+                      >
+                        0{i + 1}
+                      </span>
+                      <span
+                        className={`flex flex-col transition-colors ${
+                          isActive ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        <span className="text-[11px] uppercase tracking-[0.18em]">{s.when}</span>
+                        <span className="text-sm font-medium">{s.title}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
+
+          {/* Active stage detail */}
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="relative overflow-hidden rounded-2xl border border-hairline bg-background p-8 md:p-12"
+          >
+            <div className="pointer-events-none absolute inset-0 grid-bg opacity-25" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  {stages[active].when}
+                </div>
+                <div className="node-glow grid h-11 w-11 place-items-center rounded-xl border border-hairline bg-surface text-primary">
+                  {(() => {
+                    const Icon = stages[active].icon;
+                    return <Icon className="h-5 w-5" />;
+                  })()}
+                </div>
+              </div>
+              <h3 className="mt-6 text-2xl font-semibold tracking-tight md:text-3xl">
+                {stages[active].title}
+              </h3>
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                {stages[active].desc}
+              </p>
+              <motion.ul
+                variants={stagger}
+                initial="hidden"
+                animate="show"
+                className="mt-8 grid gap-3 sm:grid-cols-2"
+              >
+                {stages[active].bullets.map((b) => (
+                  <motion.li
+                    key={b}
+                    variants={fadeUp}
+                    className="flex items-center gap-3 rounded-xl border border-hairline bg-surface px-4 py-3 text-[13px] text-foreground/85"
+                  >
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
+                    {b}
+                  </motion.li>
+                ))}
+              </motion.ul>
+
+              <div className="mt-8 flex items-center justify-between border-t border-hairline pt-5 text-xs text-muted-foreground">
+                <span>
+                  Stage {active + 1} of {stages.length}
+                </span>
+                <div className="flex gap-1.5">
+                  {stages.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1 rounded-full transition-all ${
+                        i === active ? "w-6 bg-primary" : "w-2 bg-hairline"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -923,39 +1077,144 @@ function WhySolis() {
   );
 }
 
-/* ---------- Proof ---------- */
+/* ---------- Proof (Case Study Testimonial) ---------- */
 function Proof() {
-  const signals = [
-    { icon: FileText, label: "Fully documented handover" },
-    { icon: ShieldCheck, label: "Proven operational principles" },
-    { icon: Timer, label: "Designed for growing teams" },
-    { icon: ClipboardCheck, label: "Scalable infrastructure" },
+  const tags = [
+    "Backend System Built",
+    "Workflow Automation",
+    "Website Development",
+    "Content Strategy",
+    "Funnel Optimisation",
+    "CRM Setup",
+    "Operational Documentation",
+    "Time Saved",
+    "Reduced Manual Admin",
+    "Scalable Systems",
+  ];
+  const outcomes = [
+    "Eliminated manual processes",
+    "Created repeatable operational workflows",
+    "Built a scalable backend system",
+    "Improved business organisation",
+    "Reduced time spent on administration",
   ];
   return (
     <section className="border-t border-hairline bg-surface/40">
-      <div className="mx-auto max-w-5xl px-6 py-28">
-        <div className="text-center">
-          <Reveal>
-            <div className="text-xs uppercase tracking-[0.2em] text-primary">Proof</div>
-          </Reveal>
+      <div className="mx-auto max-w-7xl px-6 py-28">
+        <Reveal className="max-w-2xl">
+          <div className="text-xs uppercase tracking-[0.2em] text-primary">Case study</div>
+          <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
+            Systems that make growth repeatable.
+          </h2>
+        </Reveal>
+
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+          {/* Testimonial card */}
           <Reveal delay={0.05}>
-            <blockquote className="mt-6 text-balance text-3xl font-medium leading-snug tracking-tight md:text-4xl">
-              <span className="text-muted-foreground/50">“</span>
-              [Client result goes here]
-              <span className="text-muted-foreground/50">”</span>
-            </blockquote>
+            <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-background p-8 md:p-12">
+              <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_0%_0%,var(--primary)_0%,transparent_35%)]" />
+              <div className="relative flex items-center justify-between">
+                <div className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Client testimonial
+                </div>
+                <div className="text-[11px] font-mono text-muted-foreground">CS-01</div>
+              </div>
+
+              <blockquote className="relative mt-8 text-balance text-2xl font-medium leading-snug tracking-tight md:text-[28px]">
+                <span className="mr-1 text-primary/60">“</span>
+                Ronnie was an absolute pleasure to work with. Initially I had no systems in place,
+                no content strategy and was unsure of how to actually grow my business. He helped
+                me build my entire backend system, content strategy and even created a professional
+                website from scratch. He's incredibly knowledgeable when it comes to funnels,
+                systems and online business. If you're looking to scale, Solis is exactly where you
+                should be.
+                <span className="ml-1 text-primary/60">”</span>
+              </blockquote>
+
+              <div className="relative mt-8 flex items-center gap-3 border-t border-hairline pt-6">
+                <div className="grid h-10 w-10 place-items-center rounded-full bg-foreground text-sm font-semibold text-background">
+                  T
+                </div>
+                <div>
+                  <div className="text-sm font-semibold tracking-tight">Tim</div>
+                  <div className="text-xs text-muted-foreground">CSM Management</div>
+                </div>
+              </div>
+
+              <motion.div
+                variants={stagger}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-80px" }}
+                className="relative mt-6 flex flex-wrap gap-2"
+              >
+                {tags.map((t) => (
+                  <motion.span
+                    key={t}
+                    variants={fadeUp}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-surface px-3 py-1 text-[11px] text-foreground/80"
+                  >
+                    <CheckCircle2 className="h-3 w-3 text-primary" />
+                    {t}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </div>
           </Reveal>
+
+          {/* Outcome card */}
           <Reveal delay={0.15}>
-            <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-hairline bg-background px-4 py-2 text-xs text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Case studies coming soon.
+            <div className="flex h-full flex-col rounded-2xl border border-hairline bg-background p-8 md:p-10">
+              <div className="text-xs uppercase tracking-[0.2em] text-primary">Project outcome</div>
+              <h3 className="mt-3 text-xl font-semibold tracking-tight">
+                What the system delivered.
+              </h3>
+              <motion.ul
+                variants={stagger}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-80px" }}
+                className="mt-6 space-y-3 border-t border-hairline pt-6"
+              >
+                {outcomes.map((o) => (
+                  <motion.li
+                    key={o}
+                    variants={fadeUp}
+                    className="flex items-start gap-3 text-[13.5px] text-foreground/85"
+                  >
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{o}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+
+              <div className="mt-8 grid grid-cols-2 gap-3 border-t border-hairline pt-6">
+                <div className="rounded-xl border border-hairline bg-surface p-4">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Delivered
+                  </div>
+                  <div className="mt-1 text-lg font-semibold tracking-tight">Full backend</div>
+                </div>
+                <div className="rounded-xl border border-hairline bg-surface p-4">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Result
+                  </div>
+                  <div className="mt-1 text-lg font-semibold tracking-tight">Scalable ops</div>
+                </div>
+              </div>
             </div>
           </Reveal>
         </div>
 
         <Reveal delay={0.2}>
-          <div className="mt-16 grid gap-3 border-t border-hairline pt-10 sm:grid-cols-2 lg:grid-cols-4">
-            {signals.map((s) => (
+          <div className="mt-10 grid gap-3 border-t border-hairline pt-8 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: FileText, label: "Fully documented handover" },
+              { icon: ShieldCheck, label: "Proven operational principles" },
+              { icon: Timer, label: "Designed for growing teams" },
+              { icon: ClipboardCheck, label: "Scalable infrastructure" },
+            ].map((s) => (
               <div
                 key={s.label}
                 className="flex items-center gap-3 rounded-xl border border-hairline bg-background px-4 py-3"
@@ -974,15 +1233,15 @@ function Proof() {
 /* ---------- Final CTA ---------- */
 function FinalCTA() {
   return (
-    <section id="contact" className="border-t border-hairline">
+    <section id="contact" className="scroll-mt-20 border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-hairline bg-foreground p-10 text-background md:p-16">
             <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,var(--primary)_0%,transparent_45%),radial-gradient(circle_at_80%_80%,var(--primary)_0%,transparent_35%)]" />
             <div className="relative grid gap-8 md:grid-cols-[1.5fr_1fr] md:items-end">
               <h2 className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight md:text-5xl">
-                Ready to fix what's breaking between{" "}
-                <span className="text-[color:var(--primary)]">enquiry and booking</span>?
+                Ready to build the systems behind{" "}
+                <span className="text-[color:var(--primary)]">a business that scales</span>?
               </h2>
               <div className="flex md:justify-end">
                 <a
@@ -1025,16 +1284,15 @@ function Footer() {
         <FooterCol
           title="Platform"
           links={[
-            { l: "Revenue Operations", h: "#platform" },
-            { l: "Services", h: "#services" },
+            { l: "Revenue Operations", id: "platform" },
+            { l: "Services", id: "services" },
           ]}
         />
         <FooterCol
           title="Company"
           links={[
-            { l: "How It Works", h: "#how" },
-            { l: "Contact", h: "#contact" },
-            { l: "Privacy", h: "#" },
+            { l: "How It Works", id: "how" },
+            { l: "Contact", id: "contact" },
           ]}
         />
         <div className="text-xs text-muted-foreground md:text-right">
@@ -1045,16 +1303,26 @@ function Footer() {
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: { l: string; h: string }[] }) {
+function FooterCol({
+  title,
+  links,
+}: {
+  title: string;
+  links: { l: string; id: string }[];
+}) {
   return (
     <div>
       <div className="text-xs font-semibold uppercase tracking-wider text-foreground">{title}</div>
       <ul className="mt-3 space-y-2">
         {links.map((l) => (
           <li key={l.l}>
-            <a href={l.h} className="text-xs text-muted-foreground hover:text-foreground">
+            <button
+              type="button"
+              onClick={() => smoothScrollTo(l.id)}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
               {l.l}
-            </a>
+            </button>
           </li>
         ))}
       </ul>
