@@ -189,11 +189,32 @@ function Nav() {
   );
 }
 
-function LogoMark() {
+function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
+  // Off-white/cream chip with an abstract geometric electric-blue mark.
+  const chip =
+    tone === "dark"
+      ? "bg-background/10 ring-background/20"
+      : "bg-surface ring-hairline";
   return (
-    <div className="grid h-7 w-7 place-items-center rounded-md bg-foreground text-background">
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
-        <path d="M4 12h5l2-4 2 8 2-4h5" strokeLinecap="round" strokeLinejoin="round" />
+    <div
+      className={`grid h-7 w-7 place-items-center rounded-[8px] ring-1 ${chip}`}
+      aria-hidden
+    >
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
+        {/* abstract geometric mark: overlapping triangle + arc */}
+        <path
+          d="M4 18 L12 4 L20 18 Z"
+          fill="var(--primary)"
+          opacity="0.18"
+        />
+        <path
+          d="M4 18 L12 4 L20 18"
+          stroke="var(--primary)"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="12" cy="14" r="2.4" fill="var(--primary)" />
       </svg>
     </div>
   );
