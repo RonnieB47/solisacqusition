@@ -539,7 +539,6 @@ function WhoWeWorkWith() {
     </section>
   );
 }
-}
 
 /* ---------- What We Build ---------- */
 function WhatWeBuild() {
