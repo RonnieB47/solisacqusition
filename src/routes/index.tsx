@@ -808,11 +808,11 @@ function CustomerJourney() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="relative mt-14 overflow-x-auto rounded-2xl border border-hairline bg-surface/60 p-8 md:p-12">
+          <div className="relative mt-14 overflow-x-auto rounded-2xl border border-hairline bg-surface/60 p-8 md:p-14">
             <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
-            <div className="relative flex min-w-[880px] items-center justify-between gap-2">
+            <div className="relative flex min-w-[960px] items-center justify-between gap-2">
               <svg
-                className="pointer-events-none absolute left-0 top-[38px] h-6 w-full"
+                className="pointer-events-none absolute left-0 top-[44px] h-6 w-full"
                 viewBox="0 0 1000 24"
                 preserveAspectRatio="none"
               >
@@ -822,22 +822,71 @@ function CustomerJourney() {
                   y1="12"
                   y2="12"
                   stroke="var(--primary)"
-                  strokeWidth="1.5"
-                  className="flow-line"
+                  strokeOpacity="0.35"
+                  strokeWidth="1.25"
+                  strokeDasharray="4 6"
                 />
+                {/* moving data-flow pulse */}
+                <circle r="3.5" fill="var(--primary)">
+                  <animate
+                    attributeName="cx"
+                    from="60"
+                    to="940"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="cy"
+                    values="12;12;12"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0;1;1;0"
+                    keyTimes="0;0.1;0.9;1"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <circle r="6" fill="var(--primary)" opacity="0.25">
+                  <animate
+                    attributeName="cx"
+                    from="60"
+                    to="940"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
               </svg>
               {steps.map((s, i) => (
                 <motion.div
                   key={s.label}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.45 }}
+                  initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{
+                    delay: i * 0.18,
+                    duration: 0.55,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                   className="relative z-10 flex flex-1 flex-col items-center gap-3"
                 >
-                  <div className="node-glow grid h-16 w-16 place-items-center rounded-2xl border border-hairline bg-background text-primary">
-                    <s.icon className="h-5 w-5" />
-                  </div>
+                  <motion.div
+                    initial={{ boxShadow: "0 0 0 0 rgba(37,99,235,0)" }}
+                    whileInView={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(37,99,235,0)",
+                        "0 0 0 8px rgba(37,99,235,0.12)",
+                        "0 0 24px -2px rgba(37,99,235,0.35)",
+                      ],
+                    }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ delay: i * 0.18 + 0.15, duration: 0.9 }}
+                    className="grid h-20 w-20 place-items-center rounded-2xl border border-hairline bg-background text-primary"
+                  >
+                    <s.icon className="h-6 w-6" strokeWidth={1.75} />
+                  </motion.div>
                   <div className="whitespace-nowrap text-[12px] font-medium text-foreground/80">
                     {s.label}
                   </div>
