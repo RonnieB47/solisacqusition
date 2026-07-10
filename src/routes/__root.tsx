@@ -83,14 +83,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Solis builds backend infrastructure that captures leads, automates follow-up, and turns booking data into decisions for service businesses.",
       },
-      { property: "og:title", content: "Solis — Backend systems for service businesses" },
+      { property: "og:title", content: "Solis — AI-powered systems for service businesses" },
       {
         property: "og:description",
         content:
-          "AI-powered operational infrastructure for med spas, clinics, and appointment-based businesses.",
+          "Solis builds backend infrastructure that captures leads, automates follow-up, and turns booking data into decisions for service businesses.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Solis — AI-powered systems for service businesses" },
+      { name: "twitter:description", content: "Solis builds backend infrastructure that captures leads, automates follow-up, and turns booking data into decisions for service businesses." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/52e36075-071c-43e4-872f-434e8c726700/id-preview-ec7e8048--8601a3c9-6982-4e60-82d7-6b31d5789d3a.lovable.app-1783602641755.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/52e36075-071c-43e4-872f-434e8c726700/id-preview-ec7e8048--8601a3c9-6982-4e60-82d7-6b31d5789d3a.lovable.app-1783602641755.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
