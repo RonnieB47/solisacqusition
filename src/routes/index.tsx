@@ -473,25 +473,32 @@ function Problem() {
 
 /* ---------- Who We Work With ---------- */
 function WhoWeWorkWith() {
-  const pains = [
-    { icon: Clock, title: "Manual admin is eating the day", desc: "Hours lost every week to work that should run itself." },
-    { icon: Zap, title: "Leads slip through the cracks", desc: "Enquiries go unanswered or fall out of the pipeline entirely." },
-    { icon: Timer, title: "Response times are too slow", desc: "By the time someone replies, the lead has already moved on." },
-    { icon: LayoutGrid, title: "No clear operational process", desc: "Every team member handles things a slightly different way." },
-    { icon: Eye, title: "No visibility into performance", desc: "You can't see what's actually working, or where revenue leaks out." },
-    { icon: Shuffle, title: "Disconnected tools everywhere", desc: "Constantly switching between platforms that don't talk to each other." },
-    { icon: Repeat, title: "The same tasks, every day", desc: "Repetitive work that never gets documented, automated, or standardised." },
-    { icon: GaugeCircle, title: "Growth is capped by operations", desc: "More revenue just means more chaos, not a more scalable business." },
-  ];
-  const audience = [
-    "Marketing Agencies",
-    "Creative Agencies",
-    "Med Spas",
-    "Clinics",
-    "Consultants",
-    "Coaches",
-    "Professional Services",
-    "Home Services",
+  const industries = [
+    {
+      icon: Sparkles,
+      title: "Med Spas & Aesthetics Clinics",
+      desc: "High-volume enquiries that need instant, on-brand response.",
+    },
+    {
+      icon: HeartPulse,
+      title: "Dental & Healthcare Clinics",
+      desc: "Bookings, reminders, and reactivation running on autopilot.",
+    },
+    {
+      icon: Users,
+      title: "Consultants & Coaches",
+      desc: "Qualified leads booked without chasing or manual admin.",
+    },
+    {
+      icon: Hammer,
+      title: "Home Services",
+      desc: "Every enquiry captured and routed before the lead cools.",
+    },
+    {
+      icon: Briefcase,
+      title: "Professional Services",
+      desc: "Repeatable operations across intake, delivery, and reporting.",
+    },
   ];
   return (
     <section className="border-t border-hairline bg-surface/40">
@@ -502,7 +509,8 @@ function WhoWeWorkWith() {
             Built for growing service businesses.
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
-            If any of this sounds familiar, you're exactly who we build for.
+            The teams we build for share the same operational profile — appointment-driven,
+            enquiry-heavy, and outgrowing manual workflows.
           </p>
         </Reveal>
 
@@ -511,41 +519,26 @@ function WhoWeWorkWith() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         >
-          {pains.map((it) => (
+          {industries.map((it) => (
             <motion.div
               key={it.title}
               variants={fadeUp}
-              className="group rounded-2xl border border-hairline bg-background p-6 transition-all hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-sm"
+              className="group flex flex-col items-center rounded-2xl border border-hairline bg-background px-6 py-10 text-center transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm"
             >
-              <div className="grid h-10 w-10 place-items-center rounded-lg border border-hairline bg-surface text-primary transition-colors group-hover:border-primary/30">
-                <it.icon className="h-5 w-5" />
+              <div className="grid h-16 w-16 place-items-center rounded-2xl border border-hairline bg-surface text-primary transition-colors group-hover:border-primary/40">
+                <it.icon className="h-7 w-7" strokeWidth={1.75} />
               </div>
-              <h3 className="mt-5 text-[15px] font-semibold tracking-tight">{it.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{it.desc}</p>
+              <h3 className="mt-6 text-[15px] font-semibold tracking-tight">{it.title}</h3>
+              <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{it.desc}</p>
             </motion.div>
           ))}
         </motion.div>
-
-        <Reveal delay={0.1}>
-          <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-hairline pt-8">
-            <span className="mr-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Industries
-            </span>
-            {audience.map((a) => (
-              <span
-                key={a}
-                className="rounded-full border border-hairline bg-background px-3 py-1 text-xs text-foreground/80"
-              >
-                {a}
-              </span>
-            ))}
-          </div>
-        </Reveal>
       </div>
     </section>
   );
+}
 }
 
 /* ---------- What We Build ---------- */
