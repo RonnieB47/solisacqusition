@@ -1289,7 +1289,7 @@ function Proof() {
 /* ---------- Final CTA ---------- */
 function FinalCTA() {
   return (
-    <section id="contact" className="scroll-mt-20 border-t border-hairline">
+    <section className="border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-hairline bg-foreground p-10 text-background md:p-16">
@@ -1300,17 +1300,196 @@ function FinalCTA() {
                 <span className="text-[color:var(--primary)]">a business that scales</span>?
               </h2>
               <div className="flex md:justify-end">
-                <a
-                  href="#"
+                <button
+                  type="button"
+                  onClick={() => smoothScrollTo("contact")}
                   className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/40"
                 >
                   Book a Call
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
+                </button>
               </div>
             </div>
           </div>
         </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Lead Magnet (Free Systems Audit) ---------- */
+function LeadMagnet() {
+  return (
+    <section className="border-t border-hairline">
+      <div className="mx-auto max-w-7xl px-6 py-28">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-background p-8 md:p-14">
+            <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_100%_0%,var(--primary)_0%,transparent_40%)]" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+            <div className="relative grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Free · No commitment
+                </div>
+                <h2 className="mt-5 text-balance text-3xl font-semibold tracking-tight md:text-[40px] md:leading-[1.1]">
+                  Get Your Free Systems Audit.
+                </h2>
+                <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+                  Answer a few quick questions and get a personalised breakdown of where your leads
+                  are slipping through.
+                </p>
+                <ul className="mt-6 space-y-2.5">
+                  {[
+                    "10-minute questionnaire",
+                    "Personalised written breakdown",
+                    "Delivered within 48 hours",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-[13.5px] text-foreground/80">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+                className="rounded-2xl border border-hairline bg-surface p-6 md:p-8"
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Name" id="la-name" placeholder="Jane Doe" />
+                  <Field label="Email" id="la-email" type="email" placeholder="jane@company.com" />
+                  <Field
+                    label="Business Name"
+                    id="la-biz"
+                    placeholder="Acme Clinic"
+                    className="sm:col-span-2"
+                  />
+                  <Field
+                    label="Phone"
+                    id="la-phone"
+                    type="tel"
+                    placeholder="+1 555 000 0000"
+                    className="sm:col-span-2"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Get My Free Audit
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+                <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                  We'll never share your details. Unsubscribe any time.
+                </p>
+              </form>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Field({
+  label,
+  id,
+  type = "text",
+  placeholder,
+  className = "",
+}: {
+  label: string;
+  id: string;
+  type?: string;
+  placeholder?: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <label
+        htmlFor={id}
+        className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        name={id}
+        type={type}
+        placeholder={placeholder}
+        className="block w-full rounded-lg border border-hairline bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15"
+      />
+    </div>
+  );
+}
+
+/* ---------- Book a Call (Calendly embed) ---------- */
+function BookCall() {
+  return (
+    <section id="contact" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+      <div className="mx-auto max-w-6xl px-6 py-28">
+        <Reveal className="max-w-2xl">
+          <div className="text-xs uppercase tracking-[0.2em] text-primary">Book a call</div>
+          <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
+            Let's talk through your operations.
+          </h2>
+          <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
+            A 30-minute call to review your current setup and map where a Solis system would move
+            the needle first.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <div className="relative mt-12 overflow-hidden rounded-2xl border border-hairline bg-background shadow-[0_40px_100px_-40px_rgba(0,0,0,0.25)]">
+            <div className="flex items-center justify-between border-b border-hairline px-5 py-3">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
+              </div>
+              <div className="rounded-md bg-surface px-2.5 py-1 text-[11px] text-muted-foreground">
+                calendly.com / solis
+              </div>
+              <div className="w-10" />
+            </div>
+            {/* Calendly inline embed placeholder — swap src for your Calendly link */}
+            <div
+              className="calendly-inline-widget relative grid min-h-[640px] place-items-center bg-surface/40"
+              data-url="https://calendly.com/your-solis-link"
+            >
+              <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
+              <div className="relative flex flex-col items-center gap-4 px-6 py-12 text-center">
+                <div className="node-glow grid h-14 w-14 place-items-center rounded-2xl border border-hairline bg-background text-primary">
+                  <CalendarCheck className="h-6 w-6" />
+                </div>
+                <div className="text-lg font-semibold tracking-tight">
+                  Calendly widget loads here
+                </div>
+                <p className="max-w-md text-sm text-muted-foreground">
+                  Add your Calendly link to <code className="rounded bg-background px-1.5 py-0.5 text-[12px]">data-url</code> and include Calendly's embed script to render the live scheduler.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Tagline divider ---------- */
+function Tagline() {
+  return (
+    <section aria-hidden className="px-6">
+      <div className="mx-auto max-w-5xl">
+        <div className="h-px w-full bg-hairline/70" />
+        <p className="py-14 text-center text-[13px] tracking-[0.22em] text-muted-foreground/80 md:text-sm">
+          BUILT WITH INTENTION, DRIVEN BY RESULTS.
+        </p>
       </div>
     </section>
   );
