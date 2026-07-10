@@ -8,15 +8,16 @@ import {
   BarChart3,
   Bell,
   BookOpen,
+  Briefcase,
   CalendarCheck,
   CheckCircle2,
   ClipboardCheck,
   Clock,
   Compass,
-  Eye,
   FileText,
   GaugeCircle,
-  LayoutGrid,
+  Hammer,
+  HeartPulse,
   LineChart,
   MessageSquare,
   Plug,
@@ -25,10 +26,11 @@ import {
   Send,
   Settings2,
   ShieldCheck,
-  Shuffle,
+  Sparkles,
   Target,
   Timer,
   UserCheck,
+  Users,
   Wrench,
   Workflow,
   Zap,
@@ -88,10 +90,13 @@ function Landing() {
         <RevenueOps />
         <WhatWeBuild />
         <CustomerJourney />
+        <LeadMagnet />
         <HowItWorks />
         <WhySolis />
         <Proof />
         <FinalCTA />
+        <BookCall />
+        <Tagline />
       </main>
       <Footer />
     </div>
@@ -184,11 +189,32 @@ function Nav() {
   );
 }
 
-function LogoMark() {
+function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
+  // Off-white/cream chip with an abstract geometric electric-blue mark.
+  const chip =
+    tone === "dark"
+      ? "bg-background/10 ring-background/20"
+      : "bg-surface ring-hairline";
   return (
-    <div className="grid h-7 w-7 place-items-center rounded-md bg-foreground text-background">
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
-        <path d="M4 12h5l2-4 2 8 2-4h5" strokeLinecap="round" strokeLinejoin="round" />
+    <div
+      className={`grid h-7 w-7 place-items-center rounded-[8px] ring-1 ${chip}`}
+      aria-hidden
+    >
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
+        {/* abstract geometric mark: overlapping triangle + arc */}
+        <path
+          d="M4 18 L12 4 L20 18 Z"
+          fill="var(--primary)"
+          opacity="0.18"
+        />
+        <path
+          d="M4 18 L12 4 L20 18"
+          stroke="var(--primary)"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="12" cy="14" r="2.4" fill="var(--primary)" />
       </svg>
     </div>
   );
@@ -447,25 +473,32 @@ function Problem() {
 
 /* ---------- Who We Work With ---------- */
 function WhoWeWorkWith() {
-  const pains = [
-    { icon: Clock, title: "Manual admin is eating the day", desc: "Hours lost every week to work that should run itself." },
-    { icon: Zap, title: "Leads slip through the cracks", desc: "Enquiries go unanswered or fall out of the pipeline entirely." },
-    { icon: Timer, title: "Response times are too slow", desc: "By the time someone replies, the lead has already moved on." },
-    { icon: LayoutGrid, title: "No clear operational process", desc: "Every team member handles things a slightly different way." },
-    { icon: Eye, title: "No visibility into performance", desc: "You can't see what's actually working, or where revenue leaks out." },
-    { icon: Shuffle, title: "Disconnected tools everywhere", desc: "Constantly switching between platforms that don't talk to each other." },
-    { icon: Repeat, title: "The same tasks, every day", desc: "Repetitive work that never gets documented, automated, or standardised." },
-    { icon: GaugeCircle, title: "Growth is capped by operations", desc: "More revenue just means more chaos, not a more scalable business." },
-  ];
-  const audience = [
-    "Marketing Agencies",
-    "Creative Agencies",
-    "Med Spas",
-    "Clinics",
-    "Consultants",
-    "Coaches",
-    "Professional Services",
-    "Home Services",
+  const industries = [
+    {
+      icon: Sparkles,
+      title: "Med Spas & Aesthetics Clinics",
+      desc: "High-volume enquiries that need instant, on-brand response.",
+    },
+    {
+      icon: HeartPulse,
+      title: "Dental & Healthcare Clinics",
+      desc: "Bookings, reminders, and reactivation running on autopilot.",
+    },
+    {
+      icon: Users,
+      title: "Consultants & Coaches",
+      desc: "Qualified leads booked without chasing or manual admin.",
+    },
+    {
+      icon: Hammer,
+      title: "Home Services",
+      desc: "Every enquiry captured and routed before the lead cools.",
+    },
+    {
+      icon: Briefcase,
+      title: "Professional Services",
+      desc: "Repeatable operations across intake, delivery, and reporting.",
+    },
   ];
   return (
     <section className="border-t border-hairline bg-surface/40">
@@ -476,7 +509,8 @@ function WhoWeWorkWith() {
             Built for growing service businesses.
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
-            If any of this sounds familiar, you're exactly who we build for.
+            The teams we build for share the same operational profile — appointment-driven,
+            enquiry-heavy, and outgrowing manual workflows.
           </p>
         </Reveal>
 
@@ -485,38 +519,22 @@ function WhoWeWorkWith() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
         >
-          {pains.map((it) => (
+          {industries.map((it) => (
             <motion.div
               key={it.title}
               variants={fadeUp}
-              className="group rounded-2xl border border-hairline bg-background p-6 transition-all hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-sm"
+              className="group flex flex-col items-center rounded-2xl border border-hairline bg-background px-6 py-10 text-center transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm"
             >
-              <div className="grid h-10 w-10 place-items-center rounded-lg border border-hairline bg-surface text-primary transition-colors group-hover:border-primary/30">
-                <it.icon className="h-5 w-5" />
+              <div className="grid h-16 w-16 place-items-center rounded-2xl border border-hairline bg-surface text-primary transition-colors group-hover:border-primary/40">
+                <it.icon className="h-7 w-7" strokeWidth={1.75} />
               </div>
-              <h3 className="mt-5 text-[15px] font-semibold tracking-tight">{it.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{it.desc}</p>
+              <h3 className="mt-6 text-[15px] font-semibold tracking-tight">{it.title}</h3>
+              <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{it.desc}</p>
             </motion.div>
           ))}
         </motion.div>
-
-        <Reveal delay={0.1}>
-          <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-hairline pt-8">
-            <span className="mr-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Industries
-            </span>
-            {audience.map((a) => (
-              <span
-                key={a}
-                className="rounded-full border border-hairline bg-background px-3 py-1 text-xs text-foreground/80"
-              >
-                {a}
-              </span>
-            ))}
-          </div>
-        </Reveal>
       </div>
     </section>
   );
@@ -790,11 +808,11 @@ function CustomerJourney() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="relative mt-14 overflow-x-auto rounded-2xl border border-hairline bg-surface/60 p-8 md:p-12">
+          <div className="relative mt-14 overflow-x-auto rounded-2xl border border-hairline bg-surface/60 p-8 md:p-14">
             <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
-            <div className="relative flex min-w-[880px] items-center justify-between gap-2">
+            <div className="relative flex min-w-[960px] items-center justify-between gap-2">
               <svg
-                className="pointer-events-none absolute left-0 top-[38px] h-6 w-full"
+                className="pointer-events-none absolute left-0 top-[44px] h-6 w-full"
                 viewBox="0 0 1000 24"
                 preserveAspectRatio="none"
               >
@@ -804,22 +822,71 @@ function CustomerJourney() {
                   y1="12"
                   y2="12"
                   stroke="var(--primary)"
-                  strokeWidth="1.5"
-                  className="flow-line"
+                  strokeOpacity="0.35"
+                  strokeWidth="1.25"
+                  strokeDasharray="4 6"
                 />
+                {/* moving data-flow pulse */}
+                <circle r="3.5" fill="var(--primary)">
+                  <animate
+                    attributeName="cx"
+                    from="60"
+                    to="940"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="cy"
+                    values="12;12;12"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0;1;1;0"
+                    keyTimes="0;0.1;0.9;1"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <circle r="6" fill="var(--primary)" opacity="0.25">
+                  <animate
+                    attributeName="cx"
+                    from="60"
+                    to="940"
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
               </svg>
               {steps.map((s, i) => (
                 <motion.div
                   key={s.label}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.45 }}
+                  initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{
+                    delay: i * 0.18,
+                    duration: 0.55,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                   className="relative z-10 flex flex-1 flex-col items-center gap-3"
                 >
-                  <div className="node-glow grid h-16 w-16 place-items-center rounded-2xl border border-hairline bg-background text-primary">
-                    <s.icon className="h-5 w-5" />
-                  </div>
+                  <motion.div
+                    initial={{ boxShadow: "0 0 0 0 rgba(37,99,235,0)" }}
+                    whileInView={{
+                      boxShadow: [
+                        "0 0 0 0 rgba(37,99,235,0)",
+                        "0 0 0 8px rgba(37,99,235,0.12)",
+                        "0 0 24px -2px rgba(37,99,235,0.35)",
+                      ],
+                    }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ delay: i * 0.18 + 0.15, duration: 0.9 }}
+                    className="grid h-20 w-20 place-items-center rounded-2xl border border-hairline bg-background text-primary"
+                  >
+                    <s.icon className="h-6 w-6" strokeWidth={1.75} />
+                  </motion.div>
                   <div className="whitespace-nowrap text-[12px] font-medium text-foreground/80">
                     {s.label}
                   </div>
@@ -1079,18 +1146,7 @@ function WhySolis() {
 
 /* ---------- Proof (Case Study Testimonial) ---------- */
 function Proof() {
-  const tags = [
-    "Backend System Built",
-    "Workflow Automation",
-    "Website Development",
-    "Content Strategy",
-    "Funnel Optimisation",
-    "CRM Setup",
-    "Operational Documentation",
-    "Time Saved",
-    "Reduced Manual Admin",
-    "Scalable Systems",
-  ];
+  const tags = ["Backend System Built", "Workflow Automation"];
   const outcomes = [
     "Eliminated manual processes",
     "Created repeatable operational workflows",
@@ -1233,7 +1289,7 @@ function Proof() {
 /* ---------- Final CTA ---------- */
 function FinalCTA() {
   return (
-    <section id="contact" className="scroll-mt-20 border-t border-hairline">
+    <section className="border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-hairline bg-foreground p-10 text-background md:p-16">
@@ -1244,17 +1300,196 @@ function FinalCTA() {
                 <span className="text-[color:var(--primary)]">a business that scales</span>?
               </h2>
               <div className="flex md:justify-end">
-                <a
-                  href="#"
+                <button
+                  type="button"
+                  onClick={() => smoothScrollTo("contact")}
                   className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/40"
                 >
                   Book a Call
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
+                </button>
               </div>
             </div>
           </div>
         </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Lead Magnet (Free Systems Audit) ---------- */
+function LeadMagnet() {
+  return (
+    <section className="border-t border-hairline">
+      <div className="mx-auto max-w-7xl px-6 py-28">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-background p-8 md:p-14">
+            <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_100%_0%,var(--primary)_0%,transparent_40%)]" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+            <div className="relative grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Free · No commitment
+                </div>
+                <h2 className="mt-5 text-balance text-3xl font-semibold tracking-tight md:text-[40px] md:leading-[1.1]">
+                  Get Your Free Systems Audit.
+                </h2>
+                <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+                  Answer a few quick questions and get a personalised breakdown of where your leads
+                  are slipping through.
+                </p>
+                <ul className="mt-6 space-y-2.5">
+                  {[
+                    "10-minute questionnaire",
+                    "Personalised written breakdown",
+                    "Delivered within 48 hours",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-[13.5px] text-foreground/80">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+                className="rounded-2xl border border-hairline bg-surface p-6 md:p-8"
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Name" id="la-name" placeholder="Jane Doe" />
+                  <Field label="Email" id="la-email" type="email" placeholder="jane@company.com" />
+                  <Field
+                    label="Business Name"
+                    id="la-biz"
+                    placeholder="Acme Clinic"
+                    className="sm:col-span-2"
+                  />
+                  <Field
+                    label="Phone"
+                    id="la-phone"
+                    type="tel"
+                    placeholder="+1 555 000 0000"
+                    className="sm:col-span-2"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Get My Free Audit
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+                <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                  We'll never share your details. Unsubscribe any time.
+                </p>
+              </form>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Field({
+  label,
+  id,
+  type = "text",
+  placeholder,
+  className = "",
+}: {
+  label: string;
+  id: string;
+  type?: string;
+  placeholder?: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <label
+        htmlFor={id}
+        className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        name={id}
+        type={type}
+        placeholder={placeholder}
+        className="block w-full rounded-lg border border-hairline bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15"
+      />
+    </div>
+  );
+}
+
+/* ---------- Book a Call (Calendly embed) ---------- */
+function BookCall() {
+  return (
+    <section id="contact" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+      <div className="mx-auto max-w-6xl px-6 py-28">
+        <Reveal className="max-w-2xl">
+          <div className="text-xs uppercase tracking-[0.2em] text-primary">Book a call</div>
+          <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
+            Let's talk through your operations.
+          </h2>
+          <p className="mt-5 text-[15px] leading-relaxed text-muted-foreground">
+            A 30-minute call to review your current setup and map where a Solis system would move
+            the needle first.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <div className="relative mt-12 overflow-hidden rounded-2xl border border-hairline bg-background shadow-[0_40px_100px_-40px_rgba(0,0,0,0.25)]">
+            <div className="flex items-center justify-between border-b border-hairline px-5 py-3">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
+              </div>
+              <div className="rounded-md bg-surface px-2.5 py-1 text-[11px] text-muted-foreground">
+                calendly.com / solis
+              </div>
+              <div className="w-10" />
+            </div>
+            {/* Calendly inline embed placeholder — swap src for your Calendly link */}
+            <div
+              className="calendly-inline-widget relative grid min-h-[640px] place-items-center bg-surface/40"
+              data-url="https://calendly.com/your-solis-link"
+            >
+              <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
+              <div className="relative flex flex-col items-center gap-4 px-6 py-12 text-center">
+                <div className="node-glow grid h-14 w-14 place-items-center rounded-2xl border border-hairline bg-background text-primary">
+                  <CalendarCheck className="h-6 w-6" />
+                </div>
+                <div className="text-lg font-semibold tracking-tight">
+                  Calendly widget loads here
+                </div>
+                <p className="max-w-md text-sm text-muted-foreground">
+                  Add your Calendly link to <code className="rounded bg-background px-1.5 py-0.5 text-[12px]">data-url</code> and include Calendly's embed script to render the live scheduler.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Tagline divider ---------- */
+function Tagline() {
+  return (
+    <section aria-hidden className="px-6">
+      <div className="mx-auto max-w-5xl">
+        <div className="h-px w-full bg-hairline/70" />
+        <p className="py-14 text-center text-[13px] tracking-[0.22em] text-muted-foreground/80 md:text-sm">
+          BUILT WITH INTENTION, DRIVEN BY RESULTS.
+        </p>
       </div>
     </section>
   );
