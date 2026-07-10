@@ -1146,18 +1146,7 @@ function WhySolis() {
 
 /* ---------- Proof (Case Study Testimonial) ---------- */
 function Proof() {
-  const tags = [
-    "Backend System Built",
-    "Workflow Automation",
-    "Website Development",
-    "Content Strategy",
-    "Funnel Optimisation",
-    "CRM Setup",
-    "Operational Documentation",
-    "Time Saved",
-    "Reduced Manual Admin",
-    "Scalable Systems",
-  ];
+  const tags = ["Backend System Built", "Workflow Automation"];
   const outcomes = [
     "Eliminated manual processes",
     "Created repeatable operational workflows",
