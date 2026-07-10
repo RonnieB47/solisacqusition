@@ -90,10 +90,13 @@ function Landing() {
         <RevenueOps />
         <WhatWeBuild />
         <CustomerJourney />
+        <LeadMagnet />
         <HowItWorks />
         <WhySolis />
         <Proof />
         <FinalCTA />
+        <BookCall />
+        <Tagline />
       </main>
       <Footer />
     </div>
