@@ -1309,8 +1309,191 @@ function FinalCTA() {
   );
 }
 
-/* ---------- Lead Magnet (Free Systems Audit) ---------- */
+/* ---------- Lead Magnet (12-Question Systems Audit Quiz) ---------- */
+type QuizChoice = { value: string; label: string };
+type QuizQuestion = {
+  id: string;
+  q: string;
+  options: QuizChoice[];
+  hasOther?: boolean;
+};
+
+const QUIZ: QuizQuestion[] = [
+  {
+    id: "response_time",
+    q: "How quickly do you currently respond to new enquiries?",
+    options: [
+      { value: "under_5", label: "Under 5 minutes" },
+      { value: "within_hour", label: "Within an hour" },
+      { value: "same_day", label: "Same day" },
+      { value: "varies", label: "It varies" },
+    ],
+  },
+  {
+    id: "lead_source",
+    q: "What's your biggest lead source?",
+    options: [
+      { value: "social", label: "Instagram / social" },
+      { value: "google", label: "Google / website" },
+      { value: "referrals", label: "Referrals" },
+      { value: "walkins", label: "Walk-ins" },
+    ],
+  },
+  {
+    id: "tracks_noshow",
+    q: "Do you track your no-show rate?",
+    options: [
+      { value: "closely", label: "Yes, closely" },
+      { value: "roughly", label: "Roughly" },
+      { value: "no", label: "Not at all" },
+    ],
+  },
+  {
+    id: "noshow_rate",
+    q: "Roughly what % of bookings no-show or cancel last minute?",
+    options: [
+      { value: "under_10", label: "Under 10%" },
+      { value: "10_25", label: "10–25%" },
+      { value: "25_plus", label: "25%+" },
+      { value: "not_sure", label: "Not sure" },
+    ],
+  },
+  {
+    id: "auto_followup",
+    q: "Do you have any automated follow-up in place today?",
+    options: [
+      { value: "yes", label: "Yes" },
+      { value: "no", label: "No" },
+      { value: "not_sure", label: "Not sure" },
+    ],
+  },
+  {
+    id: "booking_tool",
+    q: "What do you currently use to manage bookings?",
+    options: [
+      { value: "ghl", label: "GHL" },
+      { value: "calendly", label: "Calendly" },
+      { value: "spreadsheet", label: "Spreadsheet" },
+      { value: "manual", label: "Paper / manual" },
+      { value: "other", label: "Other" },
+    ],
+  },
+  {
+    id: "monthly_bookings",
+    q: "Roughly how many bookings do you take per month?",
+    options: [
+      { value: "under_50", label: "Under 50" },
+      { value: "50_150", label: "50–150" },
+      { value: "150_300", label: "150–300" },
+      { value: "300_plus", label: "300+" },
+    ],
+  },
+  {
+    id: "enquiry_owner",
+    q: "Who handles enquiries when they come in?",
+    options: [
+      { value: "front_desk", label: "Dedicated front desk" },
+      { value: "whoever", label: "Whoever's free" },
+      { value: "owner", label: "Owner personally" },
+      { value: "nobody", label: "Nobody consistently" },
+    ],
+  },
+  {
+    id: "reminders",
+    q: "Do you send appointment reminders?",
+    options: [
+      { value: "automated", label: "Automated" },
+      { value: "manual", label: "Manual / sometimes" },
+      { value: "no", label: "No" },
+    ],
+  },
+  {
+    id: "reactivation",
+    q: "Do you have a system for reactivating past clients?",
+    options: [
+      { value: "yes", label: "Yes" },
+      { value: "no", label: "No" },
+      { value: "unknown", label: "Not sure what that means" },
+    ],
+  },
+  {
+    id: "tracking",
+    q: "How do you currently track what's working — leads, bookings, revenue?",
+    options: [
+      { value: "dashboard", label: "Dashboard / reporting tool" },
+      { value: "spreadsheet", label: "Spreadsheet" },
+      { value: "gut", label: "Gut feel" },
+      { value: "none", label: "I don't" },
+    ],
+  },
+  {
+    id: "bottleneck",
+    q: "What's the single biggest bottleneck in your booking process right now?",
+    options: [
+      { value: "slow_response", label: "Slow response" },
+      { value: "noshows", label: "No-shows" },
+      { value: "no_visibility", label: "No visibility into data" },
+      { value: "manual_admin", label: "Too much manual admin" },
+      { value: "other", label: "Other" },
+    ],
+    hasOther: true,
+  },
+];
+
 function LeadMagnet() {
+  const totalSteps = QUIZ.length + 1; // + contact step
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [otherText, setOtherText] = useState<Record<string, string>>({});
+  const [contact, setContact] = useState({ name: "", email: "", business: "", phone: "" });
+  const [submitted, setSubmitted] = useState(false);
+
+  const isQuizStep = step < QUIZ.length;
+  const current = isQuizStep ? QUIZ[step] : null;
+  const progress = Math.round(((step + (submitted ? 1 : 0)) / totalSteps) * 100);
+
+  function select(value: string) {
+    if (!current) return;
+    setAnswers((a) => ({ ...a, [current.id]: value }));
+    // Auto-advance unless "other" needs a text input
+    if (!(current.hasOther && value === "other")) {
+      setTimeout(() => setStep((s) => s + 1), 180);
+    }
+  }
+
+  function next() {
+    setStep((s) => Math.min(s + 1, totalSteps - 1));
+  }
+  function back() {
+    setStep((s) => Math.max(s - 1, 0));
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const payload = {
+      submittedAt: new Date().toISOString(),
+      answers,
+      otherText,
+      contact,
+    };
+    try {
+      const key = "solis_audit_submissions";
+      const prev = JSON.parse(localStorage.getItem(key) || "[]");
+      prev.push(payload);
+      localStorage.setItem(key, JSON.stringify(prev));
+    } catch {
+      /* ignore */
+    }
+    // Also log for the operator to review during development
+    console.info("[Solis audit submission]", payload);
+    setSubmitted(true);
+  }
+
+  const canContinueOther =
+    current?.hasOther && answers[current.id] === "other"
+      ? (otherText[current.id] || "").trim().length > 0
+      : true;
+
   return (
     <section className="border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6 py-28">
@@ -1318,7 +1501,7 @@ function LeadMagnet() {
           <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-background p-8 md:p-14">
             <div className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_100%_0%,var(--primary)_0%,transparent_40%)]" />
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
-            <div className="relative grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+            <div className="relative grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:items-center">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary">
                   <span className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -1328,12 +1511,12 @@ function LeadMagnet() {
                   Get Your Free Systems Audit.
                 </h2>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-                  Answer a few quick questions and get a personalised breakdown of where your leads
-                  are slipping through.
+                  12 quick questions, 2 minutes, zero fluff — get a personalised breakdown of where
+                  you're losing bookings.
                 </p>
                 <ul className="mt-6 space-y-2.5">
                   {[
-                    "10-minute questionnaire",
+                    "12-question diagnostic",
                     "Personalised written breakdown",
                     "Delivered within 48 hours",
                   ].map((f) => (
@@ -1345,40 +1528,185 @@ function LeadMagnet() {
                 </ul>
               </div>
 
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                }}
-                className="rounded-2xl border border-hairline bg-surface p-6 md:p-8"
-              >
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Name" id="la-name" placeholder="Jane Doe" />
-                  <Field label="Email" id="la-email" type="email" placeholder="jane@company.com" />
-                  <Field
-                    label="Business Name"
-                    id="la-biz"
-                    placeholder="Acme Clinic"
-                    className="sm:col-span-2"
-                  />
-                  <Field
-                    label="Phone"
-                    id="la-phone"
-                    type="tel"
-                    placeholder="+1 555 000 0000"
-                    className="sm:col-span-2"
+              <div className="rounded-2xl border border-hairline bg-surface p-6 md:p-8">
+                {/* Progress */}
+                <div className="mb-6 flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                  <span>
+                    {submitted
+                      ? "Complete"
+                      : isQuizStep
+                        ? `Question ${step + 1} of ${QUIZ.length}`
+                        : "Your details"}
+                  </span>
+                  <span>{progress}%</span>
+                </div>
+                <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-hairline">
+                  <motion.div
+                    className="h-full rounded-full bg-primary"
+                    initial={false}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
-                >
-                  Get My Free Audit
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </button>
-                <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                  We'll never share your details. Unsubscribe any time.
-                </p>
-              </form>
+
+                {submitted ? (
+                  <div className="flex flex-col items-center gap-4 py-8 text-center">
+                    <div className="grid h-14 w-14 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+                      <CheckCircle2 className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-semibold tracking-tight">Thanks — you're in.</h3>
+                    <p className="max-w-sm text-sm text-muted-foreground">
+                      Your personalised audit will be in your inbox within 48 hours.
+                    </p>
+                  </div>
+                ) : isQuizStep && current ? (
+                  <motion.div
+                    key={current.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                  >
+                    <h3 className="text-lg font-semibold tracking-tight md:text-xl">
+                      {current.q}
+                    </h3>
+                    <div className="mt-6 grid gap-2.5">
+                      {current.options.map((opt) => {
+                        const selected = answers[current.id] === opt.value;
+                        return (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => select(opt.value)}
+                            className={`group flex items-center justify-between rounded-xl border px-4 py-3.5 text-left text-sm transition-all ${
+                              selected
+                                ? "border-primary/60 bg-primary/10 text-foreground"
+                                : "border-hairline bg-background text-foreground/85 hover:border-primary/30 hover:bg-primary/5"
+                            }`}
+                          >
+                            <span>{opt.label}</span>
+                            <span
+                              className={`grid h-5 w-5 place-items-center rounded-full border ${
+                                selected
+                                  ? "border-primary bg-primary text-primary-foreground"
+                                  : "border-hairline"
+                              }`}
+                            >
+                              {selected && <CheckCircle2 className="h-3.5 w-3.5" />}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {current.hasOther && answers[current.id] === "other" && (
+                      <div className="mt-4">
+                        <label
+                          htmlFor={`other-${current.id}`}
+                          className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+                        >
+                          Tell us more
+                        </label>
+                        <input
+                          id={`other-${current.id}`}
+                          type="text"
+                          value={otherText[current.id] || ""}
+                          onChange={(e) =>
+                            setOtherText((o) => ({ ...o, [current.id]: e.target.value }))
+                          }
+                          maxLength={200}
+                          placeholder="Briefly describe it"
+                          className="block w-full rounded-lg border border-hairline bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                        />
+                      </div>
+                    )}
+
+                    <div className="mt-6 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={back}
+                        disabled={step === 0}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+                      >
+                        ← Back
+                      </button>
+                      {current.hasOther && answers[current.id] === "other" && (
+                        <button
+                          type="button"
+                          onClick={next}
+                          disabled={!canContinueOther}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                        >
+                          Continue
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.form
+                    onSubmit={submit}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                  >
+                    <h3 className="text-lg font-semibold tracking-tight md:text-xl">
+                      Where should we send your audit?
+                    </h3>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <QuizField
+                        label="Name"
+                        id="q-name"
+                        value={contact.name}
+                        onChange={(v) => setContact((c) => ({ ...c, name: v }))}
+                        required
+                      />
+                      <QuizField
+                        label="Email"
+                        id="q-email"
+                        type="email"
+                        value={contact.email}
+                        onChange={(v) => setContact((c) => ({ ...c, email: v }))}
+                        required
+                      />
+                      <QuizField
+                        label="Business Name"
+                        id="q-biz"
+                        value={contact.business}
+                        onChange={(v) => setContact((c) => ({ ...c, business: v }))}
+                        required
+                        className="sm:col-span-2"
+                      />
+                      <QuizField
+                        label="Phone"
+                        id="q-phone"
+                        type="tel"
+                        value={contact.phone}
+                        onChange={(v) => setContact((c) => ({ ...c, phone: v }))}
+                        className="sm:col-span-2"
+                      />
+                    </div>
+                    <div className="mt-6 flex items-center justify-between gap-4">
+                      <button
+                        type="button"
+                        onClick={back}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        ← Back
+                      </button>
+                      <button
+                        type="submit"
+                        className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+                      >
+                        Get My Free Audit
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    </div>
+                    <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                      We'll never share your details. Unsubscribe any time.
+                    </p>
+                  </motion.form>
+                )}
+              </div>
             </div>
           </div>
         </Reveal>
@@ -1387,17 +1715,21 @@ function LeadMagnet() {
   );
 }
 
-function Field({
+function QuizField({
   label,
   id,
   type = "text",
-  placeholder,
+  value,
+  onChange,
+  required,
   className = "",
 }: {
   label: string;
   id: string;
   type?: string;
-  placeholder?: string;
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
   className?: string;
 }) {
   return (
@@ -1407,12 +1739,16 @@ function Field({
         className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
       >
         {label}
+        {required && <span className="ml-1 text-primary">*</span>}
       </label>
       <input
         id={id}
         name={id}
         type={type}
-        placeholder={placeholder}
+        value={value}
+        required={required}
+        maxLength={200}
+        onChange={(e) => onChange(e.target.value)}
         className="block w-full rounded-lg border border-hairline bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15"
       />
     </div>
