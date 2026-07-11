@@ -106,6 +106,7 @@ function Landing() {
 /* ---------- Nav ---------- */
 const NAV_LINKS = [
   { label: "Platform", id: "platform" },
+  { label: "Who This Is For", id: "who" },
   { label: "Services", id: "services" },
   { label: "How It Works", id: "how" },
   { label: "Contact", id: "contact" },
