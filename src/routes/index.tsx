@@ -1421,6 +1421,17 @@ function Field({
 
 /* ---------- Book a Call (Calendly embed) ---------- */
 function BookCall() {
+  useEffect(() => {
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://assets.calendly.com/assets/external/widget.js"]',
+    );
+    if (existing) return;
+    const s = document.createElement("script");
+    s.src = "https://assets.calendly.com/assets/external/widget.js";
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
+
   return (
     <section id="contact" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-6xl px-6 py-28">
@@ -1444,28 +1455,15 @@ function BookCall() {
                 <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
               </div>
               <div className="rounded-md bg-surface px-2.5 py-1 text-[11px] text-muted-foreground">
-                calendly.com / solis
+                calendly.com / ronnieboksh1
               </div>
               <div className="w-10" />
             </div>
-            {/* Calendly inline embed placeholder — swap src for your Calendly link */}
             <div
-              className="calendly-inline-widget relative grid min-h-[640px] place-items-center bg-surface/40"
-              data-url="https://calendly.com/your-solis-link"
-            >
-              <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
-              <div className="relative flex flex-col items-center gap-4 px-6 py-12 text-center">
-                <div className="node-glow grid h-14 w-14 place-items-center rounded-2xl border border-hairline bg-background text-primary">
-                  <CalendarCheck className="h-6 w-6" />
-                </div>
-                <div className="text-lg font-semibold tracking-tight">
-                  Calendly widget loads here
-                </div>
-                <p className="max-w-md text-sm text-muted-foreground">
-                  Add your Calendly link to <code className="rounded bg-background px-1.5 py-0.5 text-[12px]">data-url</code> and include Calendly's embed script to render the live scheduler.
-                </p>
-              </div>
-            </div>
+              className="calendly-inline-widget"
+              data-url="https://calendly.com/ronnieboksh1/new-meeting?hide_gdpr_banner=1"
+              style={{ minWidth: "320px", height: "720px" }}
+            />
           </div>
         </Reveal>
       </div>
