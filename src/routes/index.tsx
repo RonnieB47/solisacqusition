@@ -16,7 +16,7 @@ import {
   Compass,
   FileText,
   GaugeCircle,
-  Hammer,
+  GaugeCircle,
   HeartPulse,
   LineChart,
   MessageSquare,
