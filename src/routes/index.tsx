@@ -1174,7 +1174,7 @@ function Proof() {
                 Ronnie was an absolute pleasure to work with. Initially I had no systems in place,
                 no content strategy and was unsure of how to actually grow my business. He helped
                 me build my entire backend system, content strategy and even created a professional
-                website from scratch. He's incredibly knowledgeable when it comes to funnels,
+                website. He's incredibly knowledgeable when it comes to funnels,
                 systems and online business. If you're looking to scale, Solis is exactly where you
                 should be.
                 <span className="ml-1 text-primary/60">”</span>
