@@ -487,23 +487,13 @@ function WhoWeWorkWith() {
       desc: "Bookings, reminders, and reactivation running on autopilot.",
     },
     {
-      icon: Users,
-      title: "Consultants & Coaches",
-      desc: "Qualified leads booked without chasing or manual admin.",
-    },
-    {
-      icon: Hammer,
-      title: "Home Services",
-      desc: "Every enquiry captured and routed before the lead cools.",
-    },
-    {
       icon: Briefcase,
       title: "Professional Services",
       desc: "Repeatable operations across intake, delivery, and reporting.",
     },
   ];
   return (
-    <section className="border-t border-hairline bg-surface/40">
+    <section id="who" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Who we work with</div>
