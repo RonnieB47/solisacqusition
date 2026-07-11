@@ -191,7 +191,8 @@ function Nav() {
 }
 
 function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
-  // Off-white/cream chip with an abstract geometric electric-blue mark.
+  // Distinct abstract mark: a solid electric-blue half-dome (rising form) with
+  // a hairline horizon and an offset accent dot. Ownable, geometric, flat.
   const chip =
     tone === "dark"
       ? "bg-background/10 ring-background/20"
@@ -202,20 +203,20 @@ function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
       aria-hidden
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
-        {/* abstract geometric mark: overlapping triangle + arc */}
         <path
-          d="M4 18 L12 4 L20 18 Z"
+          d="M4 15 A8 8 0 0 1 20 15 Z"
           fill="var(--primary)"
-          opacity="0.18"
         />
-        <path
-          d="M4 18 L12 4 L20 18"
+        <line
+          x1="3.5"
+          y1="18.25"
+          x2="20.5"
+          y2="18.25"
           stroke="var(--primary)"
-          strokeWidth="1.8"
+          strokeWidth="1.6"
           strokeLinecap="round"
-          strokeLinejoin="round"
         />
-        <circle cx="12" cy="14" r="2.4" fill="var(--primary)" />
+        <circle cx="17.5" cy="6.5" r="1.5" fill="var(--primary)" />
       </svg>
     </div>
   );
