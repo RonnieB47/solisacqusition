@@ -84,14 +84,14 @@ function Landing() {
       <main>
         <Hero />
         <Problem />
-        <WhoWeWorkWith />
-        <RevenueOps />
         <WhatWeBuild />
+        <RevenueOps />
         <CustomerJourney />
-        <LeadMagnet />
         <HowItWorks />
         <WhySolis />
+        <WhoWeWorkWith />
         <Proof />
+        <LeadMagnet />
         <FinalCTA />
         <BookCall />
         <Tagline />
