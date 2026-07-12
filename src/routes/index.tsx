@@ -103,11 +103,10 @@ function Landing() {
 
 /* ---------- Nav ---------- */
 const NAV_LINKS = [
-  { label: "Platform", id: "platform" },
-  { label: "Who This Is For", id: "who" },
   { label: "Services", id: "services" },
   { label: "How It Works", id: "how" },
-  { label: "Contact", id: "contact" },
+  { label: "Who This Is For", id: "who" },
+  { label: "Testimonials", id: "testimonials" },
 ];
 
 function smoothScrollTo(id: string) {
@@ -118,7 +117,7 @@ function smoothScrollTo(id: string) {
 }
 
 function Nav() {
-  const [active, setActive] = useState<string>("platform");
+  const [active, setActive] = useState<string>("services");
 
   useEffect(() => {
     const ids = NAV_LINKS.map((l) => l.id);
