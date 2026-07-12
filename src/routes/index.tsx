@@ -1867,19 +1867,21 @@ function Footer() {
           </a>
         </div>
         <FooterCol
-          title="Platform"
+          title="Explore"
           links={[
-            { l: "Revenue Operations", id: "platform" },
             { l: "Services", id: "services" },
+            { l: "How It Works", id: "how" },
           ]}
         />
         <FooterCol
           title="Company"
           links={[
-            { l: "How It Works", id: "how" },
-            { l: "Contact", id: "contact" },
+            { l: "Who This Is For", id: "who" },
+            { l: "Testimonials", id: "testimonials" },
+            { l: "Book a Call", id: "contact" },
           ]}
         />
+
         <div className="text-xs text-muted-foreground md:text-right">
           © {new Date().getFullYear()} Solis. All rights reserved.
         </div>
