@@ -729,7 +729,7 @@ function RevenueOps() {
     { icon: Repeat, title: "Improve", desc: "Continuous refinement as your team and volume grow." },
   ];
   return (
-    <section id="platform" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+    <section id="how" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Revenue operations</div>
