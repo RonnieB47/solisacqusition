@@ -1445,38 +1445,26 @@ const QUIZ: QuizQuestion[] = [
 ];
 
 function LeadMagnet() {
-  const totalSteps = QUIZ.length + 1; // + contact step
+  const CONTACT_STEP = 0;
+  const totalSteps = QUIZ.length + 1; // contact + 12 questions
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [otherText, setOtherText] = useState<Record<string, string>>({});
   const [contact, setContact] = useState({ name: "", email: "", business: "", phone: "" });
   const [submitted, setSubmitted] = useState(false);
 
-  const isQuizStep = step < QUIZ.length;
-  const current = isQuizStep ? QUIZ[step] : null;
-  const progress = Math.round(((step + (submitted ? 1 : 0)) / totalSteps) * 100);
+  const isContactStep = step === CONTACT_STEP;
+  const quizIndex = step - 1;
+  const isQuizStep = quizIndex >= 0 && quizIndex < QUIZ.length;
+  const current = isQuizStep ? QUIZ[quizIndex] : null;
+  const progress = submitted
+    ? 100
+    : Math.round(((step + 1) / totalSteps) * 100);
 
-  function select(value: string) {
-    if (!current) return;
-    setAnswers((a) => ({ ...a, [current.id]: value }));
-    // Auto-advance unless "other" needs a text input
-    if (!(current.hasOther && value === "other")) {
-      setTimeout(() => setStep((s) => s + 1), 180);
-    }
-  }
-
-  function next() {
-    setStep((s) => Math.min(s + 1, totalSteps - 1));
-  }
-  function back() {
-    setStep((s) => Math.max(s - 1, 0));
-  }
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
+  function persist(nextAnswers: Record<string, string>) {
     const payload = {
       submittedAt: new Date().toISOString(),
-      answers,
+      answers: nextAnswers,
       otherText,
       contact,
     };
@@ -1488,15 +1476,50 @@ function LeadMagnet() {
     } catch {
       /* ignore */
     }
-    // Also log for the operator to review during development
     console.info("[Solis audit submission]", payload);
-    setSubmitted(true);
+  }
+
+  function advanceFromQuiz(nextAnswers: Record<string, string>) {
+    if (quizIndex === QUIZ.length - 1) {
+      // Last question — submit
+      persist(nextAnswers);
+      setSubmitted(true);
+    } else {
+      setStep((s) => s + 1);
+    }
+  }
+
+  function select(value: string) {
+    if (!current) return;
+    const nextAnswers = { ...answers, [current.id]: value };
+    setAnswers(nextAnswers);
+    if (!(current.hasOther && value === "other")) {
+      setTimeout(() => advanceFromQuiz(nextAnswers), 180);
+    }
+  }
+
+  function continueOther() {
+    advanceFromQuiz(answers);
+  }
+
+  function back() {
+    setStep((s) => Math.max(s - 1, 0));
+  }
+
+  function submitContact(e: React.FormEvent) {
+    e.preventDefault();
+    setStep(1);
   }
 
   const canContinueOther =
     current?.hasOther && answers[current.id] === "other"
       ? (otherText[current.id] || "").trim().length > 0
       : true;
+
+  const canContinueContact =
+    contact.name.trim().length > 0 &&
+    contact.email.trim().length > 0 &&
+    contact.business.trim().length > 0;
 
   return (
     <section className="border-t border-hairline">
@@ -1538,9 +1561,9 @@ function LeadMagnet() {
                   <span>
                     {submitted
                       ? "Complete"
-                      : isQuizStep
-                        ? `Question ${step + 1} of ${QUIZ.length}`
-                        : "Your details"}
+                      : isContactStep
+                        ? `Step 1 of ${totalSteps} · Your details`
+                        : `Step ${step + 1} of ${totalSteps} · Question ${quizIndex + 1} of ${QUIZ.length}`}
                   </span>
                   <span>{progress}%</span>
                 </div>
@@ -1563,7 +1586,68 @@ function LeadMagnet() {
                       Your personalised audit will be in your inbox within 48 hours.
                     </p>
                   </div>
-                ) : isQuizStep && current ? (
+                ) : isContactStep ? (
+                  <motion.form
+                    key="contact"
+                    onSubmit={submitContact}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                  >
+                    <h3 className="text-lg font-semibold tracking-tight md:text-xl">
+                      Where should we send your audit?
+                    </h3>
+                    <p className="mt-2 text-[13.5px] text-muted-foreground">
+                      Start with your details — the 12-question diagnostic follows.
+                    </p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <QuizField
+                        label="Name"
+                        id="q-name"
+                        value={contact.name}
+                        onChange={(v) => setContact((c) => ({ ...c, name: v }))}
+                        required
+                      />
+                      <QuizField
+                        label="Email"
+                        id="q-email"
+                        type="email"
+                        value={contact.email}
+                        onChange={(v) => setContact((c) => ({ ...c, email: v }))}
+                        required
+                      />
+                      <QuizField
+                        label="Business Name"
+                        id="q-biz"
+                        value={contact.business}
+                        onChange={(v) => setContact((c) => ({ ...c, business: v }))}
+                        required
+                        className="sm:col-span-2"
+                      />
+                      <QuizField
+                        label="Phone"
+                        id="q-phone"
+                        type="tel"
+                        value={contact.phone}
+                        onChange={(v) => setContact((c) => ({ ...c, phone: v }))}
+                        className="sm:col-span-2"
+                      />
+                    </div>
+                    <div className="mt-6 flex items-center justify-end gap-4">
+                      <button
+                        type="submit"
+                        disabled={!canContinueContact}
+                        className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                      >
+                        Start Audit
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    </div>
+                    <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                      We'll never share your details. Unsubscribe any time.
+                    </p>
+                  </motion.form>
+                ) : current ? (
                   <motion.div
                     key={current.id}
                     initial={{ opacity: 0, y: 8 }}
@@ -1628,88 +1712,24 @@ function LeadMagnet() {
                       <button
                         type="button"
                         onClick={back}
-                        disabled={step === 0}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                       >
                         ← Back
                       </button>
                       {current.hasOther && answers[current.id] === "other" && (
                         <button
                           type="button"
-                          onClick={next}
+                          onClick={continueOther}
                           disabled={!canContinueOther}
                           className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
                         >
-                          Continue
+                          {quizIndex === QUIZ.length - 1 ? "Submit" : "Continue"}
                           <ArrowRight className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
                   </motion.div>
-                ) : (
-                  <motion.form
-                    onSubmit={submit}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    <h3 className="text-lg font-semibold tracking-tight md:text-xl">
-                      Where should we send your audit?
-                    </h3>
-                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                      <QuizField
-                        label="Name"
-                        id="q-name"
-                        value={contact.name}
-                        onChange={(v) => setContact((c) => ({ ...c, name: v }))}
-                        required
-                      />
-                      <QuizField
-                        label="Email"
-                        id="q-email"
-                        type="email"
-                        value={contact.email}
-                        onChange={(v) => setContact((c) => ({ ...c, email: v }))}
-                        required
-                      />
-                      <QuizField
-                        label="Business Name"
-                        id="q-biz"
-                        value={contact.business}
-                        onChange={(v) => setContact((c) => ({ ...c, business: v }))}
-                        required
-                        className="sm:col-span-2"
-                      />
-                      <QuizField
-                        label="Phone"
-                        id="q-phone"
-                        type="tel"
-                        value={contact.phone}
-                        onChange={(v) => setContact((c) => ({ ...c, phone: v }))}
-                        className="sm:col-span-2"
-                      />
-                    </div>
-                    <div className="mt-6 flex items-center justify-between gap-4">
-                      <button
-                        type="button"
-                        onClick={back}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        ← Back
-                      </button>
-                      <button
-                        type="submit"
-                        className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
-                      >
-                        Get My Free Audit
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </button>
-                    </div>
-                    <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                      We'll never share your details. Unsubscribe any time.
-                    </p>
-                  </motion.form>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
