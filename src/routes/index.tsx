@@ -188,32 +188,39 @@ function Nav() {
 }
 
 function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
-  // Distinct abstract mark: a solid electric-blue half-dome (rising form) with
-  // a hairline horizon and an offset accent dot. Ownable, geometric, flat.
-  const chip =
-    tone === "dark"
-      ? "bg-background/10 ring-background/20"
-      : "bg-surface ring-hairline";
+  // Solis mark: a stylised flowing "S" set on a primary-blue tile with a
+  // subtle top-light gradient — echoing the uploaded reference but recoloured
+  // to the brand's electric-blue + off-white identity.
+  const ring =
+    tone === "dark" ? "ring-background/20" : "ring-primary/30";
   return (
     <div
-      className={`grid h-7 w-7 place-items-center rounded-[8px] ring-1 ${chip}`}
+      className={`relative grid h-7 w-7 place-items-center overflow-hidden rounded-[8px] ring-1 ${ring}`}
       aria-hidden
     >
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
+      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
+        <defs>
+          <linearGradient id="solis-tile" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.78" />
+          </linearGradient>
+          <linearGradient id="solis-s" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--surface)" />
+            <stop offset="100%" stopColor="var(--background)" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="32" height="32" rx="8" fill="url(#solis-tile)" />
+        {/* Stylised S — top curl in light tone, tail curl slightly translucent */}
         <path
-          d="M4 15 A8 8 0 0 1 20 15 Z"
-          fill="var(--primary)"
+          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
+          fill="url(#solis-s)"
         />
-        <line
-          x1="3.5"
-          y1="18.25"
-          x2="20.5"
-          y2="18.25"
-          stroke="var(--primary)"
-          strokeWidth="1.6"
-          strokeLinecap="round"
+        <path
+          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
+          fill="black"
+          fillOpacity="0.08"
+          transform="translate(0.6 0.6)"
         />
-        <circle cx="17.5" cy="6.5" r="1.5" fill="var(--primary)" />
       </svg>
     </div>
   );
