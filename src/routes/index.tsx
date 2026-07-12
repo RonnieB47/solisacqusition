@@ -1151,7 +1151,7 @@ function Proof() {
     "Reduced time spent on administration",
   ];
   return (
-    <section className="border-t border-hairline bg-surface/40">
+    <section id="testimonials" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Case study</div>
