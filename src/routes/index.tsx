@@ -263,7 +263,7 @@ function Hero() {
             </button>
             <button
               type="button"
-              onClick={() => smoothScrollTo("platform")}
+              onClick={() => smoothScrollTo("how")}
               className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               See how it works
