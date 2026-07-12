@@ -84,14 +84,14 @@ function Landing() {
       <main>
         <Hero />
         <Problem />
-        <WhoWeWorkWith />
-        <RevenueOps />
         <WhatWeBuild />
+        <RevenueOps />
         <CustomerJourney />
-        <LeadMagnet />
         <HowItWorks />
         <WhySolis />
+        <WhoWeWorkWith />
         <Proof />
+        <LeadMagnet />
         <FinalCTA />
         <BookCall />
         <Tagline />
@@ -103,11 +103,10 @@ function Landing() {
 
 /* ---------- Nav ---------- */
 const NAV_LINKS = [
-  { label: "Platform", id: "platform" },
-  { label: "Who This Is For", id: "who" },
   { label: "Services", id: "services" },
   { label: "How It Works", id: "how" },
-  { label: "Contact", id: "contact" },
+  { label: "Who This Is For", id: "who" },
+  { label: "Testimonials", id: "testimonials" },
 ];
 
 function smoothScrollTo(id: string) {
@@ -118,7 +117,7 @@ function smoothScrollTo(id: string) {
 }
 
 function Nav() {
-  const [active, setActive] = useState<string>("platform");
+  const [active, setActive] = useState<string>("services");
 
   useEffect(() => {
     const ids = NAV_LINKS.map((l) => l.id);
@@ -189,32 +188,39 @@ function Nav() {
 }
 
 function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
-  // Distinct abstract mark: a solid electric-blue half-dome (rising form) with
-  // a hairline horizon and an offset accent dot. Ownable, geometric, flat.
-  const chip =
-    tone === "dark"
-      ? "bg-background/10 ring-background/20"
-      : "bg-surface ring-hairline";
+  // Solis mark: a stylised flowing "S" set on a primary-blue tile with a
+  // subtle top-light gradient — echoing the uploaded reference but recoloured
+  // to the brand's electric-blue + off-white identity.
+  const ring =
+    tone === "dark" ? "ring-background/20" : "ring-primary/30";
   return (
     <div
-      className={`grid h-7 w-7 place-items-center rounded-[8px] ring-1 ${chip}`}
+      className={`relative grid h-7 w-7 place-items-center overflow-hidden rounded-[8px] ring-1 ${ring}`}
       aria-hidden
     >
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
+      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
+        <defs>
+          <linearGradient id="solis-tile" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.78" />
+          </linearGradient>
+          <linearGradient id="solis-s" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--surface)" />
+            <stop offset="100%" stopColor="var(--background)" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="32" height="32" rx="8" fill="url(#solis-tile)" />
+        {/* Stylised S — top curl in light tone, tail curl slightly translucent */}
         <path
-          d="M4 15 A8 8 0 0 1 20 15 Z"
-          fill="var(--primary)"
+          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
+          fill="url(#solis-s)"
         />
-        <line
-          x1="3.5"
-          y1="18.25"
-          x2="20.5"
-          y2="18.25"
-          stroke="var(--primary)"
-          strokeWidth="1.6"
-          strokeLinecap="round"
+        <path
+          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
+          fill="black"
+          fillOpacity="0.08"
+          transform="translate(0.6 0.6)"
         />
-        <circle cx="17.5" cy="6.5" r="1.5" fill="var(--primary)" />
       </svg>
     </div>
   );
@@ -257,7 +263,7 @@ function Hero() {
             </button>
             <button
               type="button"
-              onClick={() => smoothScrollTo("platform")}
+              onClick={() => smoothScrollTo("how")}
               className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               See how it works
@@ -723,7 +729,7 @@ function RevenueOps() {
     { icon: Repeat, title: "Improve", desc: "Continuous refinement as your team and volume grow." },
   ];
   return (
-    <section id="platform" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+    <section id="how" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Revenue operations</div>
@@ -945,7 +951,7 @@ function HowItWorks() {
   const [active, setActive] = useState(0);
 
   return (
-    <section id="how" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+    <section className="border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Working together</div>
@@ -1145,7 +1151,7 @@ function Proof() {
     "Reduced time spent on administration",
   ];
   return (
-    <section className="border-t border-hairline bg-surface/40">
+    <section id="testimonials" className="scroll-mt-20 border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Case study</div>
@@ -1439,38 +1445,26 @@ const QUIZ: QuizQuestion[] = [
 ];
 
 function LeadMagnet() {
-  const totalSteps = QUIZ.length + 1; // + contact step
+  const CONTACT_STEP = 0;
+  const totalSteps = QUIZ.length + 1; // contact + 12 questions
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [otherText, setOtherText] = useState<Record<string, string>>({});
   const [contact, setContact] = useState({ name: "", email: "", business: "", phone: "" });
   const [submitted, setSubmitted] = useState(false);
 
-  const isQuizStep = step < QUIZ.length;
-  const current = isQuizStep ? QUIZ[step] : null;
-  const progress = Math.round(((step + (submitted ? 1 : 0)) / totalSteps) * 100);
+  const isContactStep = step === CONTACT_STEP;
+  const quizIndex = step - 1;
+  const isQuizStep = quizIndex >= 0 && quizIndex < QUIZ.length;
+  const current = isQuizStep ? QUIZ[quizIndex] : null;
+  const progress = submitted
+    ? 100
+    : Math.round(((step + 1) / totalSteps) * 100);
 
-  function select(value: string) {
-    if (!current) return;
-    setAnswers((a) => ({ ...a, [current.id]: value }));
-    // Auto-advance unless "other" needs a text input
-    if (!(current.hasOther && value === "other")) {
-      setTimeout(() => setStep((s) => s + 1), 180);
-    }
-  }
-
-  function next() {
-    setStep((s) => Math.min(s + 1, totalSteps - 1));
-  }
-  function back() {
-    setStep((s) => Math.max(s - 1, 0));
-  }
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
+  function persist(nextAnswers: Record<string, string>) {
     const payload = {
       submittedAt: new Date().toISOString(),
-      answers,
+      answers: nextAnswers,
       otherText,
       contact,
     };
@@ -1482,15 +1476,50 @@ function LeadMagnet() {
     } catch {
       /* ignore */
     }
-    // Also log for the operator to review during development
     console.info("[Solis audit submission]", payload);
-    setSubmitted(true);
+  }
+
+  function advanceFromQuiz(nextAnswers: Record<string, string>) {
+    if (quizIndex === QUIZ.length - 1) {
+      // Last question — submit
+      persist(nextAnswers);
+      setSubmitted(true);
+    } else {
+      setStep((s) => s + 1);
+    }
+  }
+
+  function select(value: string) {
+    if (!current) return;
+    const nextAnswers = { ...answers, [current.id]: value };
+    setAnswers(nextAnswers);
+    if (!(current.hasOther && value === "other")) {
+      setTimeout(() => advanceFromQuiz(nextAnswers), 180);
+    }
+  }
+
+  function continueOther() {
+    advanceFromQuiz(answers);
+  }
+
+  function back() {
+    setStep((s) => Math.max(s - 1, 0));
+  }
+
+  function submitContact(e: React.FormEvent) {
+    e.preventDefault();
+    setStep(1);
   }
 
   const canContinueOther =
     current?.hasOther && answers[current.id] === "other"
       ? (otherText[current.id] || "").trim().length > 0
       : true;
+
+  const canContinueContact =
+    contact.name.trim().length > 0 &&
+    contact.email.trim().length > 0 &&
+    contact.business.trim().length > 0;
 
   return (
     <section className="border-t border-hairline">
@@ -1532,9 +1561,9 @@ function LeadMagnet() {
                   <span>
                     {submitted
                       ? "Complete"
-                      : isQuizStep
-                        ? `Question ${step + 1} of ${QUIZ.length}`
-                        : "Your details"}
+                      : isContactStep
+                        ? `Step 1 of ${totalSteps} · Your details`
+                        : `Step ${step + 1} of ${totalSteps} · Question ${quizIndex + 1} of ${QUIZ.length}`}
                   </span>
                   <span>{progress}%</span>
                 </div>
@@ -1557,7 +1586,68 @@ function LeadMagnet() {
                       Your personalised audit will be in your inbox within 48 hours.
                     </p>
                   </div>
-                ) : isQuizStep && current ? (
+                ) : isContactStep ? (
+                  <motion.form
+                    key="contact"
+                    onSubmit={submitContact}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                  >
+                    <h3 className="text-lg font-semibold tracking-tight md:text-xl">
+                      Where should we send your audit?
+                    </h3>
+                    <p className="mt-2 text-[13.5px] text-muted-foreground">
+                      Start with your details — the 12-question diagnostic follows.
+                    </p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <QuizField
+                        label="Name"
+                        id="q-name"
+                        value={contact.name}
+                        onChange={(v) => setContact((c) => ({ ...c, name: v }))}
+                        required
+                      />
+                      <QuizField
+                        label="Email"
+                        id="q-email"
+                        type="email"
+                        value={contact.email}
+                        onChange={(v) => setContact((c) => ({ ...c, email: v }))}
+                        required
+                      />
+                      <QuizField
+                        label="Business Name"
+                        id="q-biz"
+                        value={contact.business}
+                        onChange={(v) => setContact((c) => ({ ...c, business: v }))}
+                        required
+                        className="sm:col-span-2"
+                      />
+                      <QuizField
+                        label="Phone"
+                        id="q-phone"
+                        type="tel"
+                        value={contact.phone}
+                        onChange={(v) => setContact((c) => ({ ...c, phone: v }))}
+                        className="sm:col-span-2"
+                      />
+                    </div>
+                    <div className="mt-6 flex items-center justify-end gap-4">
+                      <button
+                        type="submit"
+                        disabled={!canContinueContact}
+                        className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                      >
+                        Start Audit
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    </div>
+                    <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                      We'll never share your details. Unsubscribe any time.
+                    </p>
+                  </motion.form>
+                ) : current ? (
                   <motion.div
                     key={current.id}
                     initial={{ opacity: 0, y: 8 }}
@@ -1622,88 +1712,24 @@ function LeadMagnet() {
                       <button
                         type="button"
                         onClick={back}
-                        disabled={step === 0}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                       >
                         ← Back
                       </button>
                       {current.hasOther && answers[current.id] === "other" && (
                         <button
                           type="button"
-                          onClick={next}
+                          onClick={continueOther}
                           disabled={!canContinueOther}
                           className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
                         >
-                          Continue
+                          {quizIndex === QUIZ.length - 1 ? "Submit" : "Continue"}
                           <ArrowRight className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
                   </motion.div>
-                ) : (
-                  <motion.form
-                    onSubmit={submit}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    <h3 className="text-lg font-semibold tracking-tight md:text-xl">
-                      Where should we send your audit?
-                    </h3>
-                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                      <QuizField
-                        label="Name"
-                        id="q-name"
-                        value={contact.name}
-                        onChange={(v) => setContact((c) => ({ ...c, name: v }))}
-                        required
-                      />
-                      <QuizField
-                        label="Email"
-                        id="q-email"
-                        type="email"
-                        value={contact.email}
-                        onChange={(v) => setContact((c) => ({ ...c, email: v }))}
-                        required
-                      />
-                      <QuizField
-                        label="Business Name"
-                        id="q-biz"
-                        value={contact.business}
-                        onChange={(v) => setContact((c) => ({ ...c, business: v }))}
-                        required
-                        className="sm:col-span-2"
-                      />
-                      <QuizField
-                        label="Phone"
-                        id="q-phone"
-                        type="tel"
-                        value={contact.phone}
-                        onChange={(v) => setContact((c) => ({ ...c, phone: v }))}
-                        className="sm:col-span-2"
-                      />
-                    </div>
-                    <div className="mt-6 flex items-center justify-between gap-4">
-                      <button
-                        type="button"
-                        onClick={back}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        ← Back
-                      </button>
-                      <button
-                        type="submit"
-                        className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
-                      >
-                        Get My Free Audit
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </button>
-                    </div>
-                    <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                      We'll never share your details. Unsubscribe any time.
-                    </p>
-                  </motion.form>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
@@ -1841,19 +1867,21 @@ function Footer() {
           </a>
         </div>
         <FooterCol
-          title="Platform"
+          title="Explore"
           links={[
-            { l: "Revenue Operations", id: "platform" },
             { l: "Services", id: "services" },
+            { l: "How It Works", id: "how" },
           ]}
         />
         <FooterCol
           title="Company"
           links={[
-            { l: "How It Works", id: "how" },
-            { l: "Contact", id: "contact" },
+            { l: "Who This Is For", id: "who" },
+            { l: "Testimonials", id: "testimonials" },
+            { l: "Book a Call", id: "contact" },
           ]}
         />
+
         <div className="text-xs text-muted-foreground md:text-right">
           © {new Date().getFullYear()} Solis. All rights reserved.
         </div>
