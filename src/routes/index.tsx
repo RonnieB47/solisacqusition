@@ -951,7 +951,7 @@ function HowItWorks() {
   const [active, setActive] = useState(0);
 
   return (
-    <section id="how" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+    <section className="border-t border-hairline bg-surface/40">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-primary">Working together</div>
