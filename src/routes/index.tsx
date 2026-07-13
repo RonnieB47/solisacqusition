@@ -325,6 +325,9 @@ function Stat({ k, v }: { k: string; v: string }) {
 /* ---------- Dashboard Illustration ---------- */
 function DashboardIllustration() {
   return (
+/* ---------- Dashboard Illustration ---------- */
+function DashboardIllustration() {
+  return (
     <div className="relative">
       <div className="absolute -inset-8 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/15 via-transparent to-transparent blur-3xl" />
       <div className="rounded-2xl border border-hairline bg-surface shadow-[0_40px_100px_-40px_rgba(0,0,0,0.35)]">
@@ -334,45 +337,37 @@ function DashboardIllustration() {
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
           </div>
-          <div className="rounded-md bg-background px-2.5 py-1 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-2 rounded-md bg-background px-2.5 py-1 text-[11px] text-muted-foreground">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+            </span>
             solis.app / operations
           </div>
           <div className="w-10" />
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-5 md:grid-cols-4">
-          <MetricCard label="New Enquiries" value="248" delta="+12%" />
-          <MetricCard label="Bookings" value="176" delta="+8%" accent />
-          <MetricCard label="Response Time" value="42s" delta="-31%" />
-          <MetricCard label="Conversion" value="71%" delta="+4%" />
+          <AnimatedMetric label="New Enquiries" target={84} suffix="" delta="+9%" />
+          <AnimatedMetric label="Bookings" target={61} suffix="" delta="+6%" accent />
+          <AnimatedMetric label="Response Time" target={48} suffix="s" delta="-28%" />
+          <AnimatedMetric label="Conversion" target={72} suffix="%" delta="+3%" />
         </div>
 
         <div className="grid grid-cols-1 gap-4 px-5 pb-5 md:grid-cols-5">
           <div className="rounded-xl border border-hairline bg-background p-5 md:col-span-3">
             <div className="mb-4 flex items-center justify-between">
               <div className="text-xs font-medium">Bookings this week</div>
-              <div className="text-[10px] text-muted-foreground">Live</div>
+              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                Live
+              </div>
             </div>
-            <ChartSVG />
+            <AnimatedChart />
           </div>
           <div className="rounded-xl border border-hairline bg-background p-5 md:col-span-2">
             <div className="mb-4 text-xs font-medium">Automation queue</div>
-            <ul className="space-y-3">
-              {[
-                { t: "SMS follow-up", s: "Sent" },
-                { t: "Booking reminder", s: "Queued" },
-                { t: "Review request", s: "Scheduled" },
-                { t: "Reactivation", s: "Running" },
-              ].map((r) => (
-                <li key={r.t} className="flex items-center justify-between text-[11px]">
-                  <span className="flex items-center gap-2 text-foreground/80">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    {r.t}
-                  </span>
-                  <span className="text-muted-foreground">{r.s}</span>
-                </li>
-              ))}
-            </ul>
+            <AutomationQueue />
           </div>
         </div>
       </div>
@@ -380,26 +375,49 @@ function DashboardIllustration() {
   );
 }
 
-function MetricCard({
+function useCountUp(target: number, duration = 1400) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(target * eased));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return value;
+}
+
+function AnimatedMetric({
   label,
-  value,
+  target,
+  suffix,
   delta,
   accent,
 }: {
   label: string;
-  value: string;
+  target: number;
+  suffix: string;
   delta: string;
   accent?: boolean;
 }) {
+  const value = useCountUp(target);
   return (
     <div
-      className={`rounded-xl border p-3.5 ${
+      className={`rounded-xl border p-3.5 transition-colors ${
         accent ? "border-primary/30 bg-primary/5" : "border-hairline bg-background"
       }`}
     >
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1.5 flex items-end justify-between">
-        <div className="text-xl font-semibold tracking-tight">{value}</div>
+        <div className="text-xl font-semibold tracking-tight tabular-nums">
+          {value}
+          {suffix}
+        </div>
         <div className={`text-[10px] ${accent ? "text-primary" : "text-muted-foreground"}`}>
           {delta}
         </div>
@@ -408,36 +426,142 @@ function MetricCard({
   );
 }
 
-function ChartSVG() {
+function AnimatedChart() {
+  // Realistic weekly bookings (Mon–Sun) with a live-moving indicator dot.
+  const points = [6, 9, 8, 12, 10, 14, 11];
+  const max = 16;
+  const w = 300;
+  const h = 100;
+  const step = w / (points.length - 1);
+  const coords = points.map((p, i) => [i * step, h - (p / max) * (h - 12) - 6] as const);
+  const pathD =
+    "M" + coords.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" L");
+  const areaD =
+    pathD + ` L${w},${h} L0,${h} Z`;
+
   return (
-    <svg viewBox="0 0 300 100" className="h-28 w-full">
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-28 w-full">
       <defs>
         <linearGradient id="fill1" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.28" />
           <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <path
-        d="M0,70 L40,55 L80,60 L120,35 L160,45 L200,25 L240,30 L300,10 L300,100 L0,100 Z"
+      {/* baseline grid */}
+      {[0.25, 0.5, 0.75].map((r) => (
+        <line
+          key={r}
+          x1="0"
+          x2={w}
+          y1={h * r}
+          y2={h * r}
+          stroke="var(--hairline)"
+          strokeDasharray="2 4"
+          opacity="0.5"
+        />
+      ))}
+      <motion.path
+        d={areaD}
         fill="url(#fill1)"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
       />
-      <path
-        d="M0,70 L40,55 L80,60 L120,35 L160,45 L200,25 L240,30 L300,10"
+      <motion.path
+        d={pathD}
         fill="none"
         stroke="var(--primary)"
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
       />
-      {[
-        [40, 55],
-        [120, 35],
-        [200, 25],
-        [300, 10],
-      ].map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x} cy={y} r="2.5" fill="var(--primary)" />
+      {coords.map(([x, y], i) => (
+        <motion.circle
+          key={i}
+          cx={x}
+          cy={y}
+          r="2.4"
+          fill="var(--primary)"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.9 + i * 0.08, duration: 0.35 }}
+        />
       ))}
+      {/* live pulse dot travelling the line */}
+      <motion.circle
+        r="4"
+        fill="var(--primary)"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          cx: coords.map(([x]) => x),
+          cy: coords.map(([, y]) => y),
+        }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "linear", delay: 2 }}
+      />
+      <motion.circle
+        r="10"
+        fill="var(--primary)"
+        opacity="0.18"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: [0, 0.3, 0.3, 0],
+          cx: coords.map(([x]) => x),
+          cy: coords.map(([, y]) => y),
+        }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "linear", delay: 2 }}
+      />
     </svg>
+  );
+}
+
+function AutomationQueue() {
+  const rows = [
+    { t: "SMS follow-up", s: "Sent" },
+    { t: "Booking reminder", s: "Queued" },
+    { t: "Review request", s: "Scheduled" },
+    { t: "Reactivation", s: "Running" },
+  ];
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setActive((a) => (a + 1) % rows.length), 1600);
+    return () => clearInterval(id);
+  }, [rows.length]);
+  return (
+    <ul className="space-y-3">
+      {rows.map((r, i) => {
+        const isActive = i === active;
+        return (
+          <li key={r.t} className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-2 text-foreground/80">
+              <span className="relative flex h-1.5 w-1.5">
+                {isActive && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                    isActive ? "bg-primary" : "bg-primary/40"
+                  }`}
+                />
+              </span>
+              {r.t}
+            </span>
+            <motion.span
+              key={isActive ? `${r.t}-a` : `${r.t}-i`}
+              initial={{ opacity: 0, y: -3 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className={`text-[11px] ${isActive ? "text-primary" : "text-muted-foreground"}`}
+            >
+              {isActive ? "Running…" : r.s}
+            </motion.span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
