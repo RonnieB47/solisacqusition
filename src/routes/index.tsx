@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, type Variants } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Activity,
   ArrowRight,
@@ -188,38 +189,61 @@ function Nav() {
 }
 
 function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
-  // Solis mark: a stylised flowing "S" set on a primary-blue tile with a
-  // subtle top-light gradient — echoing the uploaded reference but recoloured
-  // to the brand's electric-blue + off-white identity.
-  const ring =
-    tone === "dark" ? "ring-background/20" : "ring-primary/30";
+  // Ribbon-style flowing "S" — inspired by the uploaded reference but
+  // recoloured to the Solis palette: deep primary-blue tile, cream highlight
+  // curl on top, primary-tinted tail curl underneath.
+  const ring = tone === "dark" ? "ring-background/20" : "ring-primary/30";
   return (
     <div
-      className={`relative grid h-7 w-7 place-items-center overflow-hidden rounded-[8px] ring-1 ${ring}`}
+      className={`relative grid h-8 w-8 place-items-center overflow-hidden rounded-[9px] ring-1 ${ring} shadow-[0_6px_18px_-8px_rgba(37,99,235,0.55)]`}
       aria-hidden
     >
-      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
+      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
         <defs>
-          <linearGradient id="solis-tile" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--primary)" stopOpacity="1" />
-            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.78" />
+          <linearGradient id="solis-tile" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="oklch(0.28 0.02 260)" />
+            <stop offset="55%" stopColor="var(--primary)" />
+            <stop offset="100%" stopColor="oklch(0.42 0.22 262)" />
           </linearGradient>
-          <linearGradient id="solis-s" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="solis-top" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--surface)" />
-            <stop offset="100%" stopColor="var(--background)" />
+            <stop offset="100%" stopColor="var(--background)" stopOpacity="0.9" />
+          </linearGradient>
+          <linearGradient id="solis-tail" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--surface)" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.55" />
           </linearGradient>
         </defs>
-        <rect x="0" y="0" width="32" height="32" rx="8" fill="url(#solis-tile)" />
-        {/* Stylised S — top curl in light tone, tail curl slightly translucent */}
+        <rect x="0" y="0" width="32" height="32" rx="9" fill="url(#solis-tile)" />
+        {/* soft top-light sheen */}
+        <rect x="0" y="0" width="32" height="14" rx="9" fill="white" fillOpacity="0.06" />
+        {/* Upper ribbon curl of the S */}
         <path
-          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
-          fill="url(#solis-s)"
+          d="M22.4 8.6c-1.9-1.5-4.3-2.2-6.8-2-3.5.3-5.9 2.5-5.8 5.3.1 2.5 1.9 3.7 5.9 4.5 3.4.7 4.6 1.4 4.6 2.7 0 1.3-1.5 2.2-3.9 2.2-1.9 0-3.8-.7-5.2-2l-.9 2.7c1.7 1.5 4.1 2.3 6.4 2.2"
+          fill="none"
+          stroke="url(#solis-top)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
+        {/* Lower tail ribbon */}
         <path
-          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
-          fill="black"
-          fillOpacity="0.08"
-          transform="translate(0.6 0.6)"
+          d="M9.4 22.4c1.6 1.4 3.9 2.2 6.4 2.1 3.8-.1 6.5-2 6.5-4.9 0-1.4-.6-2.5-1.9-3.3"
+          fill="none"
+          stroke="url(#solis-tail)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.9"
+        />
+        {/* Accent flick */}
+        <path
+          d="M20 25.5c1.2-.3 2.4-.9 3.3-1.7"
+          fill="none"
+          stroke="var(--primary-foreground)"
+          strokeOpacity="0.7"
+          strokeWidth="1.2"
+          strokeLinecap="round"
         />
       </svg>
     </div>
@@ -310,45 +334,37 @@ function DashboardIllustration() {
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
           </div>
-          <div className="rounded-md bg-background px-2.5 py-1 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-2 rounded-md bg-background px-2.5 py-1 text-[11px] text-muted-foreground">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+            </span>
             solis.app / operations
           </div>
           <div className="w-10" />
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-5 md:grid-cols-4">
-          <MetricCard label="New Enquiries" value="248" delta="+12%" />
-          <MetricCard label="Bookings" value="176" delta="+8%" accent />
-          <MetricCard label="Response Time" value="42s" delta="-31%" />
-          <MetricCard label="Conversion" value="71%" delta="+4%" />
+          <AnimatedMetric label="New Enquiries" target={84} suffix="" delta="+9%" />
+          <AnimatedMetric label="Bookings" target={61} suffix="" delta="+6%" accent />
+          <AnimatedMetric label="Response Time" target={48} suffix="s" delta="-28%" />
+          <AnimatedMetric label="Conversion" target={72} suffix="%" delta="+3%" />
         </div>
 
         <div className="grid grid-cols-1 gap-4 px-5 pb-5 md:grid-cols-5">
           <div className="rounded-xl border border-hairline bg-background p-5 md:col-span-3">
             <div className="mb-4 flex items-center justify-between">
               <div className="text-xs font-medium">Bookings this week</div>
-              <div className="text-[10px] text-muted-foreground">Live</div>
+              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                Live
+              </div>
             </div>
-            <ChartSVG />
+            <AnimatedChart />
           </div>
           <div className="rounded-xl border border-hairline bg-background p-5 md:col-span-2">
             <div className="mb-4 text-xs font-medium">Automation queue</div>
-            <ul className="space-y-3">
-              {[
-                { t: "SMS follow-up", s: "Sent" },
-                { t: "Booking reminder", s: "Queued" },
-                { t: "Review request", s: "Scheduled" },
-                { t: "Reactivation", s: "Running" },
-              ].map((r) => (
-                <li key={r.t} className="flex items-center justify-between text-[11px]">
-                  <span className="flex items-center gap-2 text-foreground/80">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    {r.t}
-                  </span>
-                  <span className="text-muted-foreground">{r.s}</span>
-                </li>
-              ))}
-            </ul>
+            <AutomationQueue />
           </div>
         </div>
       </div>
@@ -356,26 +372,49 @@ function DashboardIllustration() {
   );
 }
 
-function MetricCard({
+function useCountUp(target: number, duration = 1400) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(target * eased));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return value;
+}
+
+function AnimatedMetric({
   label,
-  value,
+  target,
+  suffix,
   delta,
   accent,
 }: {
   label: string;
-  value: string;
+  target: number;
+  suffix: string;
   delta: string;
   accent?: boolean;
 }) {
+  const value = useCountUp(target);
   return (
     <div
-      className={`rounded-xl border p-3.5 ${
+      className={`rounded-xl border p-3.5 transition-colors ${
         accent ? "border-primary/30 bg-primary/5" : "border-hairline bg-background"
       }`}
     >
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1.5 flex items-end justify-between">
-        <div className="text-xl font-semibold tracking-tight">{value}</div>
+        <div className="text-xl font-semibold tracking-tight tabular-nums">
+          {value}
+          {suffix}
+        </div>
         <div className={`text-[10px] ${accent ? "text-primary" : "text-muted-foreground"}`}>
           {delta}
         </div>
@@ -384,36 +423,142 @@ function MetricCard({
   );
 }
 
-function ChartSVG() {
+function AnimatedChart() {
+  // Realistic weekly bookings (Mon–Sun) with a live-moving indicator dot.
+  const points = [6, 9, 8, 12, 10, 14, 11];
+  const max = 16;
+  const w = 300;
+  const h = 100;
+  const step = w / (points.length - 1);
+  const coords = points.map((p, i) => [i * step, h - (p / max) * (h - 12) - 6] as const);
+  const pathD =
+    "M" + coords.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" L");
+  const areaD =
+    pathD + ` L${w},${h} L0,${h} Z`;
+
   return (
-    <svg viewBox="0 0 300 100" className="h-28 w-full">
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-28 w-full">
       <defs>
         <linearGradient id="fill1" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.28" />
           <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <path
-        d="M0,70 L40,55 L80,60 L120,35 L160,45 L200,25 L240,30 L300,10 L300,100 L0,100 Z"
+      {/* baseline grid */}
+      {[0.25, 0.5, 0.75].map((r) => (
+        <line
+          key={r}
+          x1="0"
+          x2={w}
+          y1={h * r}
+          y2={h * r}
+          stroke="var(--hairline)"
+          strokeDasharray="2 4"
+          opacity="0.5"
+        />
+      ))}
+      <motion.path
+        d={areaD}
         fill="url(#fill1)"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
       />
-      <path
-        d="M0,70 L40,55 L80,60 L120,35 L160,45 L200,25 L240,30 L300,10"
+      <motion.path
+        d={pathD}
         fill="none"
         stroke="var(--primary)"
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
       />
-      {[
-        [40, 55],
-        [120, 35],
-        [200, 25],
-        [300, 10],
-      ].map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x} cy={y} r="2.5" fill="var(--primary)" />
+      {coords.map(([x, y], i) => (
+        <motion.circle
+          key={i}
+          cx={x}
+          cy={y}
+          r="2.4"
+          fill="var(--primary)"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.9 + i * 0.08, duration: 0.35 }}
+        />
       ))}
+      {/* live pulse dot travelling the line */}
+      <motion.circle
+        r="4"
+        fill="var(--primary)"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          cx: coords.map(([x]) => x),
+          cy: coords.map(([, y]) => y),
+        }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "linear", delay: 2 }}
+      />
+      <motion.circle
+        r="10"
+        fill="var(--primary)"
+        opacity="0.18"
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: [0, 0.3, 0.3, 0],
+          cx: coords.map(([x]) => x),
+          cy: coords.map(([, y]) => y),
+        }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: "linear", delay: 2 }}
+      />
     </svg>
+  );
+}
+
+function AutomationQueue() {
+  const rows = [
+    { t: "SMS follow-up", s: "Sent" },
+    { t: "Booking reminder", s: "Queued" },
+    { t: "Review request", s: "Scheduled" },
+    { t: "Reactivation", s: "Running" },
+  ];
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setActive((a) => (a + 1) % rows.length), 1600);
+    return () => clearInterval(id);
+  }, [rows.length]);
+  return (
+    <ul className="space-y-3">
+      {rows.map((r, i) => {
+        const isActive = i === active;
+        return (
+          <li key={r.t} className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-2 text-foreground/80">
+              <span className="relative flex h-1.5 w-1.5">
+                {isActive && (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                    isActive ? "bg-primary" : "bg-primary/40"
+                  }`}
+                />
+              </span>
+              {r.t}
+            </span>
+            <motion.span
+              key={isActive ? `${r.t}-a` : `${r.t}-i`}
+              initial={{ opacity: 0, y: -3 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className={`text-[11px] ${isActive ? "text-primary" : "text-muted-foreground"}`}
+            >
+              {isActive ? "Running…" : r.s}
+            </motion.span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -423,17 +568,17 @@ function Problem() {
     {
       icon: Clock,
       title: "Leads go cold",
-      desc: "Enquiries aren't answered fast enough and prospects move on before you respond.",
+      desc: "Most enquiries decide within the first hour. Every minute a lead sits unanswered, the odds they book drop — and the ones you do reach have already priced you against a competitor who replied first.",
     },
     {
       icon: GaugeCircle,
       title: "No visibility",
-      desc: "You can't see what's driving revenue, what's stalling, or where the leaks are.",
+      desc: "You can't tell which channels actually produce paying clients, where bookings stall, or which staff, offers, or campaigns are quietly losing money. Decisions get made on gut feel instead of what the numbers say.",
     },
     {
       icon: Settings2,
       title: "Manual admin",
-      desc: "Follow-ups, reminders, and reporting eat the hours your team should spend on customers.",
+      desc: "Follow-ups, reminders, no-show chases, review requests, reporting — all of it lives in someone's head or across five tabs. It burns your team out, gets dropped when it's busy, and quietly caps how far you can grow.",
     },
   ];
   return (
@@ -1094,9 +1239,9 @@ function WhySolis() {
       desc: "Every workflow is designed around how your team actually operates.",
     },
     {
-      icon: Plug,
-      title: "Works with existing software",
-      desc: "No unnecessary migrations or replacing platforms you already rely on.",
+      icon: Workflow,
+      title: "One connected stack",
+      desc: "CRM, booking, messaging, and reporting stitched into a single operating layer — no duct tape, no drift.",
     },
     {
       icon: BookOpen,
@@ -1444,6 +1589,110 @@ const QUIZ: QuizQuestion[] = [
   },
 ];
 
+type Recommendation = { area: string; headline: string; body: string };
+
+function buildRecommendation(a: Record<string, string>): Recommendation {
+  // Priority-ordered rules — the first matching rule wins, so the "biggest
+  // gap" is surfaced first rather than a generic overall summary.
+  if (a.response_time === "same_day" || a.response_time === "varies") {
+    return {
+      area: "response_speed",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity right now is response speed. If a lead doesn't hear back within the hour, more than half quietly move on to whoever replied first. An automated instant-response system alone would likely be your fastest win.",
+    };
+  }
+  if (a.auto_followup === "no" || a.auto_followup === "not_sure") {
+    return {
+      area: "follow_up",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is automated follow-up. Most enquiries that don't book on first contact will book later — but only if something reaches them. A structured multi-touch sequence over SMS and email is the single highest-ROI system to install first.",
+    };
+  }
+  if (a.reminders === "no" || a.reminders === "manual") {
+    return {
+      area: "reminders",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is appointment reminders. Manual or missing reminders are the single biggest driver of no-shows in service businesses. Automating a two-step reminder flow typically cuts no-show rate by a third within the first month.",
+    };
+  }
+  if (a.noshow_rate === "25_plus" || a.noshow_rate === "10_25") {
+    return {
+      area: "no_shows",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is no-show recovery. At your current rate, every 100 bookings is losing you real revenue. Layering confirmation flows, deposit prompts, and same-day reminders on top of your existing calendar is the fastest way to claw that back.",
+    };
+  }
+  if (a.tracking === "none" || a.tracking === "gut") {
+    return {
+      area: "visibility",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is visibility. You're making decisions on gut feel instead of data — which means you can't tell what's actually working. A single live dashboard tracking leads, response time, bookings and revenue is where to start before optimising anything else.",
+    };
+  }
+  if (a.tracks_noshow === "no") {
+    return {
+      area: "visibility",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is tracking. You can't fix a no-show problem you're not measuring — and it's almost certainly costing you more than you think. Start by wiring booking outcomes into a single view so the number is impossible to ignore.",
+    };
+  }
+  if (a.reactivation === "no" || a.reactivation === "unknown") {
+    return {
+      area: "reactivation",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is client reactivation. Past clients are the cheapest bookings you'll ever get, and most service businesses let them go silent. An automated reactivation sequence to lapsed clients typically pays for the entire system by itself.",
+    };
+  }
+  if (a.enquiry_owner === "nobody" || a.enquiry_owner === "whoever") {
+    return {
+      area: "intake_ownership",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is intake ownership. When no single person or system owns enquiries, they get missed. Route every enquiry — form, call, DM — into one queue with clear ownership and SLAs before layering any automation on top.",
+    };
+  }
+  const bottleneckMap: Record<string, Recommendation> = {
+    slow_response: {
+      area: "response_speed",
+      headline: "Here's where to start.",
+      body:
+        "You named response time as your biggest bottleneck. Instant automated reply on every channel — form, call, DM — is the single fastest change that lifts conversion and it takes days, not months, to install.",
+    },
+    noshows: {
+      area: "no_shows",
+      headline: "Here's where to start.",
+      body:
+        "You named no-shows as your biggest bottleneck. Confirmation flows, deposit prompts, and layered reminders typically cut no-show rate by a third — start there before adding any new marketing spend.",
+    },
+    no_visibility: {
+      area: "visibility",
+      headline: "Here's where to start.",
+      body:
+        "You named visibility as your biggest bottleneck. A single live dashboard for leads, response time, bookings and revenue is the first thing to build — you can't optimise what you can't see.",
+    },
+    manual_admin: {
+      area: "manual_admin",
+      headline: "Here's where to start.",
+      body:
+        "You named manual admin as your biggest bottleneck. Map the three tasks eating the most team hours weekly (usually reminders, follow-ups, and reporting) and automate those first — the compounded time saved funds the rest of the build.",
+    },
+  };
+  if (a.bottleneck && bottleneckMap[a.bottleneck]) return bottleneckMap[a.bottleneck];
+  return {
+    area: "overall",
+    headline: "Here's where to start.",
+    body:
+      "Your setup is more mature than most — the highest-leverage next step is stitching your CRM, booking, and reporting into one connected view so improvements compound instead of getting lost between tools.",
+  };
+}
+
 function LeadMagnet() {
   const CONTACT_STEP = 0;
   const totalSteps = QUIZ.length + 1; // contact + 12 questions
@@ -1452,6 +1701,7 @@ function LeadMagnet() {
   const [otherText, setOtherText] = useState<Record<string, string>>({});
   const [contact, setContact] = useState({ name: "", email: "", business: "", phone: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [finalAnswers, setFinalAnswers] = useState<Record<string, string>>({});
 
   const isContactStep = step === CONTACT_STEP;
   const quizIndex = step - 1;
@@ -1461,12 +1711,19 @@ function LeadMagnet() {
     ? 100
     : Math.round(((step + 1) / totalSteps) * 100);
 
-  function persist(nextAnswers: Record<string, string>) {
+  const recommendation = useMemo(
+    () => (submitted ? buildRecommendation(finalAnswers) : null),
+    [submitted, finalAnswers],
+  );
+
+  async function persist(nextAnswers: Record<string, string>) {
+    const rec = buildRecommendation(nextAnswers);
     const payload = {
       submittedAt: new Date().toISOString(),
       answers: nextAnswers,
       otherText,
       contact,
+      weakest_area: rec.area,
     };
     try {
       const key = "solis_audit_submissions";
@@ -1476,13 +1733,27 @@ function LeadMagnet() {
     } catch {
       /* ignore */
     }
-    console.info("[Solis audit submission]", payload);
+    try {
+      const { error } = await supabase.from("audit_submissions" as never).insert({
+        name: contact.name.trim(),
+        email: contact.email.trim(),
+        business_name: contact.business.trim(),
+        phone: contact.phone.trim() || null,
+        answers: nextAnswers,
+        other_text: otherText,
+        weakest_area: rec.area,
+      } as never);
+      if (error) console.error("[Solis audit] supabase insert failed", error);
+    } catch (err) {
+      console.error("[Solis audit] supabase insert threw", err);
+    }
   }
 
   function advanceFromQuiz(nextAnswers: Record<string, string>) {
     if (quizIndex === QUIZ.length - 1) {
       // Last question — submit
-      persist(nextAnswers);
+      setFinalAnswers(nextAnswers);
+      void persist(nextAnswers);
       setSubmitted(true);
     } else {
       setStep((s) => s + 1);
@@ -1538,14 +1809,14 @@ function LeadMagnet() {
                   Get Your Free Systems Audit.
                 </h2>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-                  12 quick questions, 2 minutes, zero fluff — get a personalised breakdown of where
-                  you're losing bookings.
+                  12 quick questions, 2 minutes, zero fluff — see the single weakest area in your
+                  operation and the specific next step to fix it, right on this page.
                 </p>
                 <ul className="mt-6 space-y-2.5">
                   {[
                     "12-question diagnostic",
-                    "Personalised written breakdown",
-                    "Delivered within 48 hours",
+                    "Instant on-page recommendation",
+                    "No follow-up required",
                   ].map((f) => (
                     <li key={f} className="flex items-center gap-2 text-[13.5px] text-foreground/80">
                       <CheckCircle2 className="h-4 w-4 text-primary" />
@@ -1576,17 +1847,43 @@ function LeadMagnet() {
                   />
                 </div>
 
-                {submitted ? (
-                  <div className="flex flex-col items-center gap-4 py-8 text-center">
-                    <div className="grid h-14 w-14 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
-                      <CheckCircle2 className="h-6 w-6" />
+                {submitted && recommendation ? (
+                  <motion.div
+                    key="done"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45 }}
+                    className="py-2"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+                        <CheckCircle2 className="h-5 w-5" />
+                      </div>
+                      <div className="text-[11px] uppercase tracking-[0.16em] text-primary">
+                        Your result
+                      </div>
                     </div>
-                    <h3 className="text-xl font-semibold tracking-tight">Thanks — you're in.</h3>
-                    <p className="max-w-sm text-sm text-muted-foreground">
-                      Your personalised audit will be in your inbox within 48 hours.
+                    <h3 className="mt-5 text-2xl font-semibold tracking-tight md:text-[28px] md:leading-tight">
+                      {recommendation.headline}
+                    </h3>
+                    <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+                      {recommendation.body}
                     </p>
-                  </div>
-                ) : isContactStep ? (
+                    <div className="mt-8 flex flex-col gap-3 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-[12px] text-muted-foreground">
+                        Want us to build this for you? Book a 30-minute call.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => smoothScrollTo("contact")}
+                        className="group inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+                      >
+                        Book a Call
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : submitted ? null : isContactStep ? (
                   <motion.form
                     key="contact"
                     onSubmit={submitContact}
@@ -1595,10 +1892,10 @@ function LeadMagnet() {
                     transition={{ duration: 0.35 }}
                   >
                     <h3 className="text-lg font-semibold tracking-tight md:text-xl">
-                      Where should we send your audit?
+                      Tell us who you are.
                     </h3>
                     <p className="mt-2 text-[13.5px] text-muted-foreground">
-                      Start with your details — the 12-question diagnostic follows.
+                      Quick context first — the 12-question diagnostic follows.
                     </p>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2">
                       <QuizField
