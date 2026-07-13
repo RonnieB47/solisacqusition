@@ -568,17 +568,17 @@ function Problem() {
     {
       icon: Clock,
       title: "Leads go cold",
-      desc: "Enquiries aren't answered fast enough and prospects move on before you respond.",
+      desc: "Most enquiries decide within the first hour. Every minute a lead sits unanswered, the odds they book drop — and the ones you do reach have already priced you against a competitor who replied first.",
     },
     {
       icon: GaugeCircle,
       title: "No visibility",
-      desc: "You can't see what's driving revenue, what's stalling, or where the leaks are.",
+      desc: "You can't tell which channels actually produce paying clients, where bookings stall, or which staff, offers, or campaigns are quietly losing money. Decisions get made on gut feel instead of what the numbers say.",
     },
     {
       icon: Settings2,
       title: "Manual admin",
-      desc: "Follow-ups, reminders, and reporting eat the hours your team should spend on customers.",
+      desc: "Follow-ups, reminders, no-show chases, review requests, reporting — all of it lives in someone's head or across five tabs. It burns your team out, gets dropped when it's busy, and quietly caps how far you can grow.",
     },
   ];
   return (
