@@ -1847,17 +1847,43 @@ function LeadMagnet() {
                   />
                 </div>
 
-                {submitted ? (
-                  <div className="flex flex-col items-center gap-4 py-8 text-center">
-                    <div className="grid h-14 w-14 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
-                      <CheckCircle2 className="h-6 w-6" />
+                {submitted && recommendation ? (
+                  <motion.div
+                    key="done"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45 }}
+                    className="py-2"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+                        <CheckCircle2 className="h-5 w-5" />
+                      </div>
+                      <div className="text-[11px] uppercase tracking-[0.16em] text-primary">
+                        Your result
+                      </div>
                     </div>
-                    <h3 className="text-xl font-semibold tracking-tight">Thanks — you're in.</h3>
-                    <p className="max-w-sm text-sm text-muted-foreground">
-                      Your personalised audit will be in your inbox within 48 hours.
+                    <h3 className="mt-5 text-2xl font-semibold tracking-tight md:text-[28px] md:leading-tight">
+                      {recommendation.headline}
+                    </h3>
+                    <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+                      {recommendation.body}
                     </p>
-                  </div>
-                ) : isContactStep ? (
+                    <div className="mt-8 flex flex-col gap-3 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-[12px] text-muted-foreground">
+                        Want us to build this for you? Book a 30-minute call.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => smoothScrollTo("contact")}
+                        className="group inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+                      >
+                        Book a Call
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : submitted ? null : isContactStep ? (
                   <motion.form
                     key="contact"
                     onSubmit={submitContact}
