@@ -1239,9 +1239,9 @@ function WhySolis() {
       desc: "Every workflow is designed around how your team actually operates.",
     },
     {
-      icon: Plug,
-      title: "Works with existing software",
-      desc: "No unnecessary migrations or replacing platforms you already rely on.",
+      icon: Workflow,
+      title: "One connected stack",
+      desc: "CRM, booking, messaging, and reporting stitched into a single operating layer — no duct tape, no drift.",
     },
     {
       icon: BookOpen,
