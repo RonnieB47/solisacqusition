@@ -325,9 +325,6 @@ function Stat({ k, v }: { k: string; v: string }) {
 /* ---------- Dashboard Illustration ---------- */
 function DashboardIllustration() {
   return (
-/* ---------- Dashboard Illustration ---------- */
-function DashboardIllustration() {
-  return (
     <div className="relative">
       <div className="absolute -inset-8 -z-10 rounded-[2rem] bg-gradient-to-br from-primary/15 via-transparent to-transparent blur-3xl" />
       <div className="rounded-2xl border border-hairline bg-surface shadow-[0_40px_100px_-40px_rgba(0,0,0,0.35)]">
