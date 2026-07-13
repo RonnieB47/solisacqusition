@@ -1809,8 +1809,8 @@ function LeadMagnet() {
                   Get Your Free Systems Audit.
                 </h2>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-                  12 quick questions, 2 minutes, zero fluff — get a personalised breakdown of where
-                  you're losing bookings.
+                  12 quick questions, 2 minutes, zero fluff — see the single weakest area in your
+                  operation and the specific next step to fix it, right on this page.
                 </p>
                 <ul className="mt-6 space-y-2.5">
                   {[
