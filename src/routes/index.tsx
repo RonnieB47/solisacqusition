@@ -1589,6 +1589,110 @@ const QUIZ: QuizQuestion[] = [
   },
 ];
 
+type Recommendation = { area: string; headline: string; body: string };
+
+function buildRecommendation(a: Record<string, string>): Recommendation {
+  // Priority-ordered rules — the first matching rule wins, so the "biggest
+  // gap" is surfaced first rather than a generic overall summary.
+  if (a.response_time === "same_day" || a.response_time === "varies") {
+    return {
+      area: "response_speed",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity right now is response speed. If a lead doesn't hear back within the hour, more than half quietly move on to whoever replied first. An automated instant-response system alone would likely be your fastest win.",
+    };
+  }
+  if (a.auto_followup === "no" || a.auto_followup === "not_sure") {
+    return {
+      area: "follow_up",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is automated follow-up. Most enquiries that don't book on first contact will book later — but only if something reaches them. A structured multi-touch sequence over SMS and email is the single highest-ROI system to install first.",
+    };
+  }
+  if (a.reminders === "no" || a.reminders === "manual") {
+    return {
+      area: "reminders",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is appointment reminders. Manual or missing reminders are the single biggest driver of no-shows in service businesses. Automating a two-step reminder flow typically cuts no-show rate by a third within the first month.",
+    };
+  }
+  if (a.noshow_rate === "25_plus" || a.noshow_rate === "10_25") {
+    return {
+      area: "no_shows",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is no-show recovery. At your current rate, every 100 bookings is losing you real revenue. Layering confirmation flows, deposit prompts, and same-day reminders on top of your existing calendar is the fastest way to claw that back.",
+    };
+  }
+  if (a.tracking === "none" || a.tracking === "gut") {
+    return {
+      area: "visibility",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is visibility. You're making decisions on gut feel instead of data — which means you can't tell what's actually working. A single live dashboard tracking leads, response time, bookings and revenue is where to start before optimising anything else.",
+    };
+  }
+  if (a.tracks_noshow === "no") {
+    return {
+      area: "visibility",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is tracking. You can't fix a no-show problem you're not measuring — and it's almost certainly costing you more than you think. Start by wiring booking outcomes into a single view so the number is impossible to ignore.",
+    };
+  }
+  if (a.reactivation === "no" || a.reactivation === "unknown") {
+    return {
+      area: "reactivation",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is client reactivation. Past clients are the cheapest bookings you'll ever get, and most service businesses let them go silent. An automated reactivation sequence to lapsed clients typically pays for the entire system by itself.",
+    };
+  }
+  if (a.enquiry_owner === "nobody" || a.enquiry_owner === "whoever") {
+    return {
+      area: "intake_ownership",
+      headline: "Here's where to start.",
+      body:
+        "Your biggest opportunity is intake ownership. When no single person or system owns enquiries, they get missed. Route every enquiry — form, call, DM — into one queue with clear ownership and SLAs before layering any automation on top.",
+    };
+  }
+  const bottleneckMap: Record<string, Recommendation> = {
+    slow_response: {
+      area: "response_speed",
+      headline: "Here's where to start.",
+      body:
+        "You named response time as your biggest bottleneck. Instant automated reply on every channel — form, call, DM — is the single fastest change that lifts conversion and it takes days, not months, to install.",
+    },
+    noshows: {
+      area: "no_shows",
+      headline: "Here's where to start.",
+      body:
+        "You named no-shows as your biggest bottleneck. Confirmation flows, deposit prompts, and layered reminders typically cut no-show rate by a third — start there before adding any new marketing spend.",
+    },
+    no_visibility: {
+      area: "visibility",
+      headline: "Here's where to start.",
+      body:
+        "You named visibility as your biggest bottleneck. A single live dashboard for leads, response time, bookings and revenue is the first thing to build — you can't optimise what you can't see.",
+    },
+    manual_admin: {
+      area: "manual_admin",
+      headline: "Here's where to start.",
+      body:
+        "You named manual admin as your biggest bottleneck. Map the three tasks eating the most team hours weekly (usually reminders, follow-ups, and reporting) and automate those first — the compounded time saved funds the rest of the build.",
+    },
+  };
+  if (a.bottleneck && bottleneckMap[a.bottleneck]) return bottleneckMap[a.bottleneck];
+  return {
+    area: "overall",
+    headline: "Here's where to start.",
+    body:
+      "Your setup is more mature than most — the highest-leverage next step is stitching your CRM, booking, and reporting into one connected view so improvements compound instead of getting lost between tools.",
+  };
+}
+
 function LeadMagnet() {
   const CONTACT_STEP = 0;
   const totalSteps = QUIZ.length + 1; // contact + 12 questions
@@ -1597,6 +1701,7 @@ function LeadMagnet() {
   const [otherText, setOtherText] = useState<Record<string, string>>({});
   const [contact, setContact] = useState({ name: "", email: "", business: "", phone: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [finalAnswers, setFinalAnswers] = useState<Record<string, string>>({});
 
   const isContactStep = step === CONTACT_STEP;
   const quizIndex = step - 1;
@@ -1606,12 +1711,19 @@ function LeadMagnet() {
     ? 100
     : Math.round(((step + 1) / totalSteps) * 100);
 
-  function persist(nextAnswers: Record<string, string>) {
+  const recommendation = useMemo(
+    () => (submitted ? buildRecommendation(finalAnswers) : null),
+    [submitted, finalAnswers],
+  );
+
+  async function persist(nextAnswers: Record<string, string>) {
+    const rec = buildRecommendation(nextAnswers);
     const payload = {
       submittedAt: new Date().toISOString(),
       answers: nextAnswers,
       otherText,
       contact,
+      weakest_area: rec.area,
     };
     try {
       const key = "solis_audit_submissions";
@@ -1621,13 +1733,27 @@ function LeadMagnet() {
     } catch {
       /* ignore */
     }
-    console.info("[Solis audit submission]", payload);
+    try {
+      const { error } = await supabase.from("audit_submissions" as never).insert({
+        name: contact.name.trim(),
+        email: contact.email.trim(),
+        business_name: contact.business.trim(),
+        phone: contact.phone.trim() || null,
+        answers: nextAnswers,
+        other_text: otherText,
+        weakest_area: rec.area,
+      } as never);
+      if (error) console.error("[Solis audit] supabase insert failed", error);
+    } catch (err) {
+      console.error("[Solis audit] supabase insert threw", err);
+    }
   }
 
   function advanceFromQuiz(nextAnswers: Record<string, string>) {
     if (quizIndex === QUIZ.length - 1) {
       // Last question — submit
-      persist(nextAnswers);
+      setFinalAnswers(nextAnswers);
+      void persist(nextAnswers);
       setSubmitted(true);
     } else {
       setStep((s) => s + 1);
