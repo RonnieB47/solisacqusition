@@ -189,38 +189,61 @@ function Nav() {
 }
 
 function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
-  // Solis mark: a stylised flowing "S" set on a primary-blue tile with a
-  // subtle top-light gradient — echoing the uploaded reference but recoloured
-  // to the brand's electric-blue + off-white identity.
-  const ring =
-    tone === "dark" ? "ring-background/20" : "ring-primary/30";
+  // Ribbon-style flowing "S" — inspired by the uploaded reference but
+  // recoloured to the Solis palette: deep primary-blue tile, cream highlight
+  // curl on top, primary-tinted tail curl underneath.
+  const ring = tone === "dark" ? "ring-background/20" : "ring-primary/30";
   return (
     <div
-      className={`relative grid h-7 w-7 place-items-center overflow-hidden rounded-[8px] ring-1 ${ring}`}
+      className={`relative grid h-8 w-8 place-items-center overflow-hidden rounded-[9px] ring-1 ${ring} shadow-[0_6px_18px_-8px_rgba(37,99,235,0.55)]`}
       aria-hidden
     >
-      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden>
+      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
         <defs>
-          <linearGradient id="solis-tile" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--primary)" stopOpacity="1" />
-            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.78" />
+          <linearGradient id="solis-tile" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="oklch(0.28 0.02 260)" />
+            <stop offset="55%" stopColor="var(--primary)" />
+            <stop offset="100%" stopColor="oklch(0.42 0.22 262)" />
           </linearGradient>
-          <linearGradient id="solis-s" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="solis-top" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--surface)" />
-            <stop offset="100%" stopColor="var(--background)" />
+            <stop offset="100%" stopColor="var(--background)" stopOpacity="0.9" />
+          </linearGradient>
+          <linearGradient id="solis-tail" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--surface)" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.55" />
           </linearGradient>
         </defs>
-        <rect x="0" y="0" width="32" height="32" rx="8" fill="url(#solis-tile)" />
-        {/* Stylised S — top curl in light tone, tail curl slightly translucent */}
+        <rect x="0" y="0" width="32" height="32" rx="9" fill="url(#solis-tile)" />
+        {/* soft top-light sheen */}
+        <rect x="0" y="0" width="32" height="14" rx="9" fill="white" fillOpacity="0.06" />
+        {/* Upper ribbon curl of the S */}
         <path
-          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
-          fill="url(#solis-s)"
+          d="M22.4 8.6c-1.9-1.5-4.3-2.2-6.8-2-3.5.3-5.9 2.5-5.8 5.3.1 2.5 1.9 3.7 5.9 4.5 3.4.7 4.6 1.4 4.6 2.7 0 1.3-1.5 2.2-3.9 2.2-1.9 0-3.8-.7-5.2-2l-.9 2.7c1.7 1.5 4.1 2.3 6.4 2.2"
+          fill="none"
+          stroke="url(#solis-top)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
+        {/* Lower tail ribbon */}
         <path
-          d="M21.4 9.2c-1.4-1.3-3.3-2-5.4-2-3.6 0-6.3 2.1-6.3 5 0 2.6 1.9 4 5.7 4.9l1.7.4c2.1.5 3 1.1 3 2.1 0 1.3-1.4 2.2-3.6 2.2-2 0-3.9-.7-5.4-2l-1.6 2.4c1.9 1.6 4.4 2.5 6.9 2.5 4 0 6.7-2 6.7-5.1 0-2.7-1.9-4.1-6-5.1l-1.6-.4c-1.9-.5-2.8-1-2.8-1.9 0-1.2 1.3-2 3.3-2 1.6 0 3.1.5 4.4 1.5l1-2.5z"
-          fill="black"
-          fillOpacity="0.08"
-          transform="translate(0.6 0.6)"
+          d="M9.4 22.4c1.6 1.4 3.9 2.2 6.4 2.1 3.8-.1 6.5-2 6.5-4.9 0-1.4-.6-2.5-1.9-3.3"
+          fill="none"
+          stroke="url(#solis-tail)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.9"
+        />
+        {/* Accent flick */}
+        <path
+          d="M20 25.5c1.2-.3 2.4-.9 3.3-1.7"
+          fill="none"
+          stroke="var(--primary-foreground)"
+          strokeOpacity="0.7"
+          strokeWidth="1.2"
+          strokeLinecap="round"
         />
       </svg>
     </div>
