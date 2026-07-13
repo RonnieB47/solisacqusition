@@ -1892,10 +1892,10 @@ function LeadMagnet() {
                     transition={{ duration: 0.35 }}
                   >
                     <h3 className="text-lg font-semibold tracking-tight md:text-xl">
-                      Where should we send your audit?
+                      Tell us who you are.
                     </h3>
                     <p className="mt-2 text-[13.5px] text-muted-foreground">
-                      Start with your details — the 12-question diagnostic follows.
+                      Quick context first — the 12-question diagnostic follows.
                     </p>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2">
                       <QuizField
