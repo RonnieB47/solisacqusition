@@ -1815,8 +1815,8 @@ function LeadMagnet() {
                 <ul className="mt-6 space-y-2.5">
                   {[
                     "12-question diagnostic",
-                    "Personalised written breakdown",
-                    "Delivered within 48 hours",
+                    "Instant on-page recommendation",
+                    "No follow-up required",
                   ].map((f) => (
                     <li key={f} className="flex items-center gap-2 text-[13.5px] text-foreground/80">
                       <CheckCircle2 className="h-4 w-4 text-primary" />
