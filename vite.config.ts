@@ -10,6 +10,21 @@ export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
-    server: { entry: "server" },
+    server: {
+      entry: "server",
+      // Security headers applied to every response (best-effort hardening)
+      routeRules: {
+        "/**": {
+          headers: {
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+            "Strict-Transport-Security":
+              "max-age=63072000; includeSubDomains; preload",
+            "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          },
+        },
+      },
+    },
   },
 });

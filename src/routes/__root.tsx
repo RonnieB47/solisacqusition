@@ -77,33 +77,75 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Solis — AI-powered systems for service businesses" },
+      { title: "Solis — Backend Systems for Clinics & Service Businesses" },
       {
         name: "description",
         content:
-          "Solis builds backend infrastructure that captures leads, automates follow-up, and turns booking data into decisions for service businesses.",
+          "Solis builds the backend systems behind clinics, med spas and service businesses — instant lead response, automated follow-up, no-show recovery and revenue reporting. Get a free systems audit.",
       },
-      { property: "og:title", content: "Solis — AI-powered systems for service businesses" },
+      {
+        name: "keywords",
+        content:
+          "clinic systems, med spa automation, speed to lead, booking automation, no-show recovery, revenue operations, GoHighLevel, service business systems",
+      },
+      { name: "robots", content: "index, follow" },
+      { name: "author", content: "Solis Acquisition" },
+      { name: "theme-color", content: "#0a0c10" },
+      { name: "apple-mobile-web-app-title", content: "Solis" },
+      // Open Graph
+      { property: "og:site_name", content: "Solis Acquisition" },
+      { property: "og:title", content: "Solis — Backend Systems for Clinics & Service Businesses" },
       {
         property: "og:description",
         content:
-          "Solis builds backend infrastructure that captures leads, automates follow-up, and turns booking data into decisions for service businesses.",
+          "The backend systems that make sure a clinic never loses a customer to slow response, no-shows or poor follow-up. Get a free 2-minute systems audit.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://solisacquisition.com" },
+      { property: "og:locale", content: "en_GB" },
+      { property: "og:image", content: "https://solisacquisition.com/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      // Twitter
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Solis — AI-powered systems for service businesses" },
-      { name: "twitter:description", content: "Solis builds backend infrastructure that captures leads, automates follow-up, and turns booking data into decisions for service businesses." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/52e36075-071c-43e4-872f-434e8c726700/id-preview-ec7e8048--8601a3c9-6982-4e60-82d7-6b31d5789d3a.lovable.app-1783602641755.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/52e36075-071c-43e4-872f-434e8c726700/id-preview-ec7e8048--8601a3c9-6982-4e60-82d7-6b31d5789d3a.lovable.app-1783602641755.png" },
+      { name: "twitter:title", content: "Solis — Backend Systems for Clinics & Service Businesses" },
+      {
+        name: "twitter:description",
+        content:
+          "The backend systems that make sure a clinic never loses a customer to slow response, no-shows or poor follow-up. Get a free 2-minute systems audit.",
+      },
+      { name: "twitter:image", content: "https://solisacquisition.com/og-image.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "canonical", href: "https://solisacquisition.com" },
+      { rel: "icon", href: "/favicon.ico?v=2", type: "image/x-icon" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: "Solis Acquisition",
+          description:
+            "Backend systems and revenue operations for clinics, med spas and service businesses.",
+          url: "https://solisacquisition.com",
+          areaServed: "GB",
+          serviceType: [
+            "Speed-to-lead systems",
+            "Workflow automation",
+            "No-show recovery",
+            "Reporting & revenue intelligence",
+          ],
+        }),
       },
     ],
   }),

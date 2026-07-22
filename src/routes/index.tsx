@@ -23,7 +23,6 @@ import {
   Plug,
   Repeat,
   Rocket,
-  Send,
   Settings2,
   ShieldCheck,
   Sparkles,
@@ -110,34 +109,67 @@ const NAV_LINKS = [
   { label: "Testimonials", id: "testimonials" },
 ];
 
+// Every section the URL/scroll-spy tracks (incl. hero + contact, which
+// aren't shown as nav items but should still update the address bar).
+const SPY_IDS = ["home", "services", "how", "who", "testimonials", "contact"];
+
+// While a click-initiated scroll animates, the scroll-spy is locked so it
+// can't rewrite the hash mid-animation and interrupt the smooth scroll.
+let spyLocked = false;
+let spyLockTimer: ReturnType<typeof setTimeout> | undefined;
+function lockSpy(ms = 700) {
+  spyLocked = true;
+  clearTimeout(spyLockTimer);
+  spyLockTimer = setTimeout(() => (spyLocked = false), ms);
+}
+
 function smoothScrollTo(id: string) {
+  lockSpy();
+  if (id === "home") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search,
+    );
+    return;
+  }
   const el = document.getElementById(id);
   if (!el) return;
   const y = el.getBoundingClientRect().top + window.scrollY - 72;
   window.scrollTo({ top: y, behavior: "smooth" });
+  history.replaceState(null, "", `#${id}`);
 }
 
 function Nav() {
-  const [active, setActive] = useState<string>("services");
+  const [active, setActive] = useState<string>("home");
 
   useEffect(() => {
-    const ids = NAV_LINKS.map((l) => l.id);
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActive(visible.target.id);
-      },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 1] },
-    );
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+    const onScroll = () => {
+      // Locked while a click-initiated smooth scroll is still animating.
+      if (spyLocked) {
+        lockSpy(150); // keep locked until scrolling idles
+        return;
+      }
+      const marker = window.innerHeight * 0.35;
+      let current = "home";
+      for (const id of SPY_IDS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= marker) current = id;
+      }
+      setActive(current);
+      const desired = current === "home" ? "" : `#${current}`;
+      if (window.location.hash !== desired) {
+        history.replaceState(
+          null,
+          "",
+          desired || window.location.pathname + window.location.search,
+        );
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -145,7 +177,10 @@ function Nav() {
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-6 px-6 py-4">
         <button
           type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => {
+            setActive("home");
+            smoothScrollTo("home");
+          }}
           className="flex items-center gap-2"
         >
           <LogoMark />
@@ -155,10 +190,14 @@ function Nav() {
           {NAV_LINKS.map((l) => {
             const isActive = active === l.id;
             return (
-              <button
+              <a
                 key={l.id}
-                type="button"
-                onClick={() => smoothScrollTo(l.id)}
+                href={`#${l.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActive(l.id);
+                  smoothScrollTo(l.id);
+                }}
                 className={`relative text-sm transition-colors ${
                   isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -171,7 +210,7 @@ function Nav() {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-              </button>
+              </a>
             );
           })}
         </nav>
@@ -189,63 +228,16 @@ function Nav() {
 }
 
 function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
-  // Ribbon-style flowing "S" — inspired by the uploaded reference but
-  // recoloured to the Solis palette: deep primary-blue tile, cream highlight
-  // curl on top, primary-tinted tail curl underneath.
+  // Clean brand mark: solid primary-blue rounded tile with a bold white "S".
   const ring = tone === "dark" ? "ring-background/20" : "ring-primary/30";
   return (
     <div
-      className={`relative grid h-8 w-8 place-items-center overflow-hidden rounded-[9px] ring-1 ${ring} shadow-[0_6px_18px_-8px_rgba(37,99,235,0.55)]`}
+      className={`grid h-8 w-8 place-items-center rounded-[9px] bg-primary ring-1 ${ring} shadow-[0_6px_18px_-8px_rgba(37,99,235,0.55)]`}
       aria-hidden
     >
-      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
-        <defs>
-          <linearGradient id="solis-tile" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="oklch(0.28 0.02 260)" />
-            <stop offset="55%" stopColor="var(--primary)" />
-            <stop offset="100%" stopColor="oklch(0.42 0.22 262)" />
-          </linearGradient>
-          <linearGradient id="solis-top" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--surface)" />
-            <stop offset="100%" stopColor="var(--background)" stopOpacity="0.9" />
-          </linearGradient>
-          <linearGradient id="solis-tail" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--surface)" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.55" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="32" height="32" rx="9" fill="url(#solis-tile)" />
-        {/* soft top-light sheen */}
-        <rect x="0" y="0" width="32" height="14" rx="9" fill="white" fillOpacity="0.06" />
-        {/* Upper ribbon curl of the S */}
-        <path
-          d="M22.4 8.6c-1.9-1.5-4.3-2.2-6.8-2-3.5.3-5.9 2.5-5.8 5.3.1 2.5 1.9 3.7 5.9 4.5 3.4.7 4.6 1.4 4.6 2.7 0 1.3-1.5 2.2-3.9 2.2-1.9 0-3.8-.7-5.2-2l-.9 2.7c1.7 1.5 4.1 2.3 6.4 2.2"
-          fill="none"
-          stroke="url(#solis-top)"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        {/* Lower tail ribbon */}
-        <path
-          d="M9.4 22.4c1.6 1.4 3.9 2.2 6.4 2.1 3.8-.1 6.5-2 6.5-4.9 0-1.4-.6-2.5-1.9-3.3"
-          fill="none"
-          stroke="url(#solis-tail)"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.9"
-        />
-        {/* Accent flick */}
-        <path
-          d="M20 25.5c1.2-.3 2.4-.9 3.3-1.7"
-          fill="none"
-          stroke="var(--primary-foreground)"
-          strokeOpacity="0.7"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-      </svg>
+      <span className="text-[17px] font-semibold leading-none text-white">
+        S
+      </span>
     </div>
   );
 }
@@ -253,7 +245,7 @@ function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
 /* ---------- Hero ---------- */
 function Hero() {
   return (
-    <section className="relative overflow-hidden">
+    <section id="home" className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-40 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
       <div className="relative mx-auto flex min-h-[92vh] max-w-6xl flex-col items-center px-6 pt-24 pb-20 md:pt-32">
         <Reveal>
@@ -1733,15 +1725,38 @@ function LeadMagnet() {
     } catch {
       /* ignore */
     }
+    // Convert a stored answer code (e.g. "gut") into its readable label
+    // (e.g. "Gut feel") using the QUIZ definition.
+    const labelFor = (qid: string): string | null => {
+      const value = nextAnswers[qid];
+      if (!value) return null;
+      const q = QUIZ.find((x) => x.id === qid);
+      return q?.options.find((o) => o.value === value)?.label ?? value;
+    };
+    const otherDetail =
+      Object.values(otherText).filter((t) => t && t.trim()).join("; ") || null;
+
     try {
       const { error } = await supabase.from("audit_submissions" as never).insert({
         name: contact.name.trim(),
         email: contact.email.trim(),
         business_name: contact.business.trim(),
         phone: contact.phone.trim() || null,
+        response_speed: labelFor("response_time"),
+        lead_source: labelFor("lead_source"),
+        tracks_noshows: labelFor("tracks_noshow"),
+        noshow_rate: labelFor("noshow_rate"),
+        automated_followup: labelFor("auto_followup"),
+        booking_tool: labelFor("booking_tool"),
+        monthly_bookings: labelFor("monthly_bookings"),
+        enquiry_handler: labelFor("enquiry_owner"),
+        reminders: labelFor("reminders"),
+        reactivation: labelFor("reactivation"),
+        tracking_method: labelFor("tracking"),
+        bottleneck: labelFor("bottleneck"),
+        other_detail: otherDetail,
+        recommendation: rec.body,
         answers: nextAnswers,
-        other_text: otherText,
-        weakest_area: rec.area,
       } as never);
       if (error) console.error("[Solis audit] supabase insert failed", error);
     } catch (err) {
@@ -2148,20 +2163,17 @@ function Footer() {
     <footer className="border-t border-hairline">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-[1.5fr_1fr_1fr_1fr] md:items-start">
         <div>
-          <a href="#" className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="flex items-center gap-2"
+          >
             <LogoMark />
             <span className="text-sm font-semibold tracking-tight">Solis</span>
-          </a>
+          </button>
           <p className="mt-3 max-w-xs text-xs leading-relaxed text-muted-foreground">
             Revenue operations infrastructure for modern service businesses.
           </p>
-          <a
-            href="#"
-            className="mt-4 inline-flex items-center gap-1.5 text-xs text-foreground hover:text-primary"
-          >
-            <Send className="h-3.5 w-3.5" />
-            hello@solis.systems
-          </a>
         </div>
         <FooterCol
           title="Explore"
@@ -2180,7 +2192,7 @@ function Footer() {
         />
 
         <div className="text-xs text-muted-foreground md:text-right">
-          © {new Date().getFullYear()} Solis. All rights reserved.
+          © 2025 Solis Acquisition. All rights reserved.
         </div>
       </div>
     </footer>
