@@ -64,9 +64,9 @@
   * {
     border-color: var(--color-border);
   }
-  html {
-    scroll-behavior: smooth;
-  }
+  /* No global `scroll-behavior: smooth` — it makes wheel/trackpad scrolling
+     feel floaty and fights the JS smooth-scroll used by nav clicks
+     (smoothScrollTo already passes behavior:"smooth" for those). */
   /* Tailwind v4 drops the default pointer cursor on buttons — restore it
      so every clickable clearly reads as clickable. */
   button:not(:disabled),
@@ -108,4 +108,39 @@
 @utility flow-line {
   stroke-dasharray: 4 6;
   animation: pulse-flow 3s linear infinite;
+}
+
+/* ---------- Liquid glass pill (tuned for the light hero) ----------
+   Frosted translucent fill + a luminous blue gradient edge, so it reads as a
+   premium glass clickable on the warm off-white background. */
+@utility liquid-glass {
+  background: oklch(1 0 0 / 0.55);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow:
+    0 8px 26px -12px oklch(0.548 0.221 262 / 0.4),
+    inset 0 1px 1px oklch(1 0 0 / 0.7);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.2px;
+  background: linear-gradient(
+    140deg,
+    oklch(0.62 0.19 262 / 0.7) 0%,
+    oklch(0.62 0.19 262 / 0.15) 35%,
+    transparent 55%,
+    oklch(0.62 0.19 262 / 0.15) 75%,
+    oklch(0.62 0.19 262 / 0.6) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }

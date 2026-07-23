@@ -145,12 +145,12 @@ function Nav() {
   const [active, setActive] = useState<string>("home");
 
   useEffect(() => {
+    // Highlight the nav item for the section currently in view. This ONLY sets
+    // React state — it must never touch the URL or scroll position. The old
+    // version rewrote the URL hash on every scroll, which the router then tried
+    // to scroll to, yanking the page around. State-only = zero interference.
     const onScroll = () => {
-      // Locked while a click-initiated smooth scroll is still animating.
-      if (spyLocked) {
-        lockSpy(150); // keep locked until scrolling idles
-        return;
-      }
+      if (spyLocked) return;
       const marker = window.innerHeight * 0.35;
       let current = "home";
       for (const id of SPY_IDS) {
@@ -158,14 +158,6 @@ function Nav() {
         if (el && el.getBoundingClientRect().top <= marker) current = id;
       }
       setActive(current);
-      const desired = current === "home" ? "" : `#${current}`;
-      if (window.location.hash !== desired) {
-        history.replaceState(
-          null,
-          "",
-          desired || window.location.pathname + window.location.search,
-        );
-      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -280,7 +272,7 @@ function Hero() {
             <button
               type="button"
               onClick={() => smoothScrollTo("how")}
-              className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              className="liquid-glass inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-foreground transition-transform hover:-translate-y-px"
             >
               See how it works
             </button>
@@ -1808,7 +1800,7 @@ function LeadMagnet() {
     contact.business.trim().length > 0;
 
   return (
-    <section className="border-t border-hairline">
+    <section id="audit" className="scroll-mt-20 border-t border-hairline">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-background p-8 md:p-14">
