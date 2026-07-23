@@ -182,11 +182,10 @@ function Nav() {
           {NAV_LINKS.map((l) => {
             const isActive = active === l.id;
             return (
-              <a
+              <button
                 key={l.id}
-                href={`#${l.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
+                type="button"
+                onClick={() => {
                   setActive(l.id);
                   smoothScrollTo(l.id);
                 }}
@@ -202,7 +201,7 @@ function Nav() {
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
-              </a>
+              </button>
             );
           })}
         </nav>
