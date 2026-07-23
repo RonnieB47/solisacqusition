@@ -125,20 +125,24 @@ function lockSpy(ms = 700) {
 
 function smoothScrollTo(id: string) {
   lockSpy();
-  if (id === "home") {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  let top = 0;
+  if (id !== "home") {
+    const el = document.getElementById(id);
+    if (!el) return;
+    top = el.getBoundingClientRect().top + window.scrollY - 72;
+  }
+  window.scrollTo({ top, behavior: "smooth" });
+  // IMPORTANT: never write a section hash (e.g. #services) to the URL. TanStack's
+  // history layer sees the hash and jumps to that element instantly, overriding
+  // this smooth scroll — that's exactly why the (hash-clearing) logo glided but
+  // the (hash-setting) nav items snapped. Only ever clear an existing hash.
+  if (window.location.hash) {
     history.replaceState(
       null,
       "",
       window.location.pathname + window.location.search,
     );
-    return;
   }
-  const el = document.getElementById(id);
-  if (!el) return;
-  const y = el.getBoundingClientRect().top + window.scrollY - 72;
-  window.scrollTo({ top: y, behavior: "smooth" });
-  history.replaceState(null, "", `#${id}`);
 }
 
 function Nav() {
@@ -149,7 +153,9 @@ function Nav() {
     // React state — it must never touch the URL or scroll position. The old
     // version rewrote the URL hash on every scroll, which the router then tried
     // to scroll to, yanking the page around. State-only = zero interference.
-    const onScroll = () => {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
       if (spyLocked) return;
       const marker = window.innerHeight * 0.35;
       let current = "home";
@@ -159,7 +165,16 @@ function Nav() {
       }
       setActive(current);
     };
-    onScroll();
+    // rAF-throttle: run the getBoundingClientRect reads at most once per frame.
+    // Doing them on every scroll event forced synchronous layout and added the
+    // slight scroll friction.
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
