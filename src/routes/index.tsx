@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, type Variants } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -249,65 +249,198 @@ function LogoMark({ tone = "light" }: { tone?: "light" | "dark" }) {
 }
 
 /* ---------- Hero ---------- */
+const heroEase = [0.22, 1, 0.36, 1] as const;
+
 function Hero() {
   return (
     <section id="home" className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 grid-bg opacity-40 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
-      <div className="relative mx-auto flex min-h-[92vh] max-w-6xl flex-col items-center px-6 pt-24 pb-20 md:pt-32">
-        <Reveal>
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-xs text-muted-foreground">
+      {/* Intentional ground: a warm glow anchored under the product panel, a fine grid confined to the right side rather than a generic full-bleed texture. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 right-[-8%] h-[560px] w-[560px] rounded-full bg-primary/10 blur-[130px]" />
+        <div className="absolute inset-0 grid-bg opacity-[0.4] [mask-image:radial-gradient(120%_75%_at_82%_8%,black_0%,transparent_58%)]" />
+      </div>
+
+      <div className="relative mx-auto grid min-h-[90vh] max-w-6xl grid-cols-1 items-center gap-14 px-6 pt-24 pb-20 md:pt-28 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
+        {/* Left — the pitch, left-aligned and specific */}
+        <div className="max-w-xl">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: heroEase }}
+            className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur"
+          >
             <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            Revenue operations infrastructure
-          </div>
-        </Reveal>
-        <Reveal delay={0.05}>
-          <h1 className="max-w-4xl text-balance text-center text-5xl font-semibold leading-[1.02] tracking-tight md:text-6xl lg:text-[76px]">
-            The systems behind service{" "}
-            <span className="text-primary">businesses that scale.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.15}>
-          <p className="mt-8 max-w-2xl text-center text-[17px] leading-relaxed text-muted-foreground md:text-[19px]">
-            Solis builds the operational infrastructure that removes bottlenecks, automates the
-            repetitive work slowing your team down, and gives you complete visibility into how your
-            business actually runs.
-          </p>
-        </Reveal>
-        <Reveal delay={0.25}>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            For aesthetic clinics &amp; med spas
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: heroEase, delay: 0.06 }}
+            className="mt-6 text-[clamp(2.6rem,6vw,4.4rem)] font-semibold leading-[0.98] tracking-[-0.035em]"
+          >
+            Be with your clients.
+            <br />
+            <span className="text-primary">Not your inbox.</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: heroEase, delay: 0.14 }}
+            className="mt-6 max-w-lg text-[17px] leading-relaxed text-muted-foreground md:text-[18px]"
+          >
+            Solis builds the backend that answers new enquiries in seconds, chases no-shows before
+            they happen, and keeps every follow-up on track — automatically. The admin that eats your
+            day, quietly handled.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: heroEase, delay: 0.22 }}
+            className="mt-9 flex flex-wrap items-center gap-3"
+          >
             <button
               type="button"
               onClick={() => smoothScrollTo("contact")}
               className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
             >
-              Book a Call
+              Book a call
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
             <button
               type="button"
-              onClick={() => smoothScrollTo("how")}
+              onClick={() => smoothScrollTo("audit")}
               className="liquid-glass inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-foreground transition-transform hover:-translate-y-px"
             >
-              See how it works
+              Take the 2-min audit
             </button>
-          </div>
-        </Reveal>
+          </motion.div>
 
-        <Reveal delay={0.35} className="mt-20 w-full">
-          <div className="mx-auto max-w-5xl">
-            <DashboardIllustration />
-          </div>
-        </Reveal>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.42 }}
+            className="mt-6 text-[13px] text-muted-foreground"
+          >
+            No pressure, nothing to install — just a clear picture of where your clinic loses time.
+          </motion.p>
+        </div>
 
-        <Reveal delay={0.45} className="mt-16 w-full">
-          <div className="mx-auto grid max-w-4xl grid-cols-3 gap-6 border-t border-hairline pt-8 text-sm">
-            <Stat k="< 60s" v="Lead response" />
-            <Stat k="24/7" v="Operational uptime" />
-            <Stat k="Live" v="Revenue reporting" />
-          </div>
-        </Reveal>
+        {/* Right — the product, actually working */}
+        <LiveOpsPanel />
       </div>
     </section>
+  );
+}
+
+// The hero's authored moment: a LIVE operations feed. New automations roll in
+// at the top every few seconds, so the panel is visibly working — concrete
+// proof of what Solis does, not an abstract illustration.
+const OPS_POOL = [
+  { icon: MessageSquare, label: "Auto-replied to a new enquiry", meta: "Instagram · just now" },
+  { icon: CalendarCheck, label: "Deposit reminder sent", meta: "Tomorrow, 2:00pm" },
+  { icon: Repeat, label: "No-show followed up — rebooked", meta: "Gap filled" },
+  { icon: Sparkles, label: "Review request sent", meta: "After treatment" },
+  { icon: Bell, label: "Appointment confirmed", meta: "SMS · just now" },
+  { icon: UserCheck, label: "New client added to CRM", meta: "From website form" },
+  { icon: Clock, label: "Follow-up scheduled", meta: "6-week check-in" },
+  { icon: Zap, label: "Waitlist offer sent — booked", meta: "Cancellation filled" },
+];
+
+function LiveOpsPanel() {
+  const VISIBLE = 4;
+  const [items, setItems] = useState(() =>
+    OPS_POOL.slice(0, VISIBLE).map((a, i) => ({ ...a, id: i })),
+  );
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return; // hold the feed still for reduced-motion users
+    }
+    let next = VISIBLE;
+    let uid = VISIBLE;
+    const t = setInterval(() => {
+      setItems((prev) => {
+        const entry = { ...OPS_POOL[next % OPS_POOL.length], id: uid };
+        next += 1;
+        uid += 1;
+        return [entry, ...prev].slice(0, VISIBLE);
+      });
+    }, 3600);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 26, filter: "blur(12px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ duration: 0.85, ease: heroEase, delay: 0.18 }}
+      className="relative"
+    >
+      <div aria-hidden className="absolute -inset-6 -z-10 rounded-[2rem] bg-primary/10 blur-3xl" />
+      <div className="overflow-hidden rounded-2xl border border-hairline bg-background shadow-[0_44px_110px_-45px_rgba(20,22,26,0.4)]">
+        <div className="flex items-center justify-between border-b border-hairline px-5 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-sm font-semibold text-white">
+              A
+            </div>
+            <div className="text-[14px] font-semibold tracking-tight">Aveline Aesthetics</div>
+          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+            </span>
+            Live
+          </div>
+        </div>
+
+        <div className="relative">
+          <AnimatePresence initial={false}>
+            {items.map((f) => (
+              <motion.div
+                key={f.id}
+                layout
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.45, ease: heroEase }}
+                className="overflow-hidden border-b border-hairline last:border-b-0"
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, ease: heroEase, delay: 0.06 }}
+                  className="flex items-center gap-3.5 px-5 py-3.5"
+                >
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-hairline bg-surface text-primary">
+                    <f.icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[13px] font-medium">{f.label}</div>
+                    <div className="text-[11.5px] text-muted-foreground">{f.meta}</div>
+                  </div>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-primary/45" />
+                </motion.div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-hairline bg-surface/60 px-5 py-3.5 text-[12px]">
+          <span className="text-muted-foreground">This week, hands-off</span>
+          <span className="font-medium">
+            42 enquiries answered · 9 no-shows prevented ·{" "}
+            <span className="text-primary">£3,180 recovered</span>
+          </span>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
