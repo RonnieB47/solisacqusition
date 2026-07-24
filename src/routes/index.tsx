@@ -254,57 +254,33 @@ const heroEase = [0.22, 1, 0.36, 1] as const;
 function Hero() {
   return (
     <section id="home" className="relative overflow-hidden">
-      {/* Intentional ground: a warm glow anchored under the product panel, a fine grid confined to the right side rather than a generic full-bleed texture. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-24 right-[-8%] h-[560px] w-[560px] rounded-full bg-primary/10 blur-[130px]" />
-        <div className="absolute inset-0 grid-bg opacity-[0.4] [mask-image:radial-gradient(120%_75%_at_82%_8%,black_0%,transparent_58%)]" />
-      </div>
-
-      <div className="relative mx-auto grid min-h-[90vh] max-w-6xl grid-cols-1 items-center gap-14 px-6 pt-24 pb-20 md:pt-28 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
-        {/* Left — the pitch, left-aligned and specific */}
-        <div className="max-w-xl">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: heroEase }}
-            className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur"
-          >
+      <div className="pointer-events-none absolute inset-0 grid-bg opacity-40 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
+      <div className="relative mx-auto flex min-h-[92vh] max-w-6xl flex-col items-center px-6 pt-24 pb-20 md:pt-32">
+        <Reveal>
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-xs text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            For aesthetic clinics &amp; med spas
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: heroEase, delay: 0.06 }}
-            className="mt-6 text-[clamp(2.6rem,6vw,4.4rem)] font-semibold leading-[0.98] tracking-[-0.035em]"
-          >
-            Be with your clients.
-            <br />
-            <span className="text-primary">Not your inbox.</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: heroEase, delay: 0.14 }}
-            className="mt-6 max-w-lg text-[17px] leading-relaxed text-muted-foreground md:text-[18px]"
-          >
-            Solis builds the backend that answers new enquiries in seconds, chases no-shows before
-            they happen, and keeps every follow-up on track — automatically. The admin that eats your
-            day, quietly handled.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: heroEase, delay: 0.22 }}
-            className="mt-9 flex flex-wrap items-center gap-3"
-          >
+            Revenue operations infrastructure
+          </div>
+        </Reveal>
+        <Reveal delay={0.05}>
+          <h1 className="max-w-4xl text-balance text-center text-[2.5rem] font-semibold leading-[1.04] tracking-tight sm:text-5xl md:text-6xl lg:text-[76px] lg:leading-[1.02]">
+            The systems behind service{" "}
+            <span className="text-primary">businesses that scale.</span>
+          </h1>
+        </Reveal>
+        <Reveal delay={0.15}>
+          <p className="mt-8 max-w-2xl text-center text-[16px] leading-relaxed text-muted-foreground md:text-[19px]">
+            Solis builds the operational infrastructure that removes bottlenecks, automates the
+            repetitive work slowing your team down, and gives you complete visibility into how your
+            business actually runs.
+          </p>
+        </Reveal>
+        <Reveal delay={0.25}>
+          <div className="mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <button
               type="button"
               onClick={() => smoothScrollTo("contact")}
-              className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
             >
               Book a call
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -312,24 +288,29 @@ function Hero() {
             <button
               type="button"
               onClick={() => smoothScrollTo("audit")}
-              className="liquid-glass inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-foreground transition-transform hover:-translate-y-px"
+              className="liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-foreground transition-transform hover:-translate-y-px"
             >
               Take the 2-min audit
             </button>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.42 }}
-            className="mt-6 text-[13px] text-muted-foreground"
-          >
+          </div>
+        </Reveal>
+        <Reveal delay={0.3}>
+          <p className="mt-6 max-w-md text-center text-[13px] text-muted-foreground">
             No pressure, nothing to install — just a clear picture of where your clinic loses time.
-          </motion.p>
+          </p>
+        </Reveal>
+
+        <div className="mt-16 w-full max-w-md">
+          <LiveOpsPanel />
         </div>
 
-        {/* Right — the product, actually working */}
-        <LiveOpsPanel />
+        <Reveal delay={0.2} className="mt-16 w-full">
+          <div className="mx-auto grid max-w-4xl grid-cols-3 gap-4 border-t border-hairline pt-8 text-sm sm:gap-6">
+            <Stat k="< 60s" v="Lead response" />
+            <Stat k="24/7" v="Operational uptime" />
+            <Stat k="Live" v="Revenue reporting" />
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -704,7 +685,7 @@ function Problem() {
     {
       icon: GaugeCircle,
       title: "No visibility",
-      desc: "You can't tell which channels actually produce paying clients, where bookings stall, or which staff, offers, or campaigns are quietly losing money. Decisions get made on gut feel instead of what the numbers say.",
+      desc: "You can't see which channels bring in paying clients, where bookings drop off, or which treatments and offers actually make money — so decisions get made on gut feel instead of the numbers.",
     },
     {
       icon: Settings2,
@@ -1242,7 +1223,7 @@ function HowItWorks() {
 
         <div className="mt-16 grid gap-10 lg:grid-cols-[220px_1fr]">
           {/* Stage rail */}
-          <div className="relative">
+          <div className="relative min-w-0">
             <div className="absolute left-[19px] top-2 bottom-2 hidden w-px bg-hairline lg:block" />
             <motion.div
               key={active}
@@ -1293,7 +1274,7 @@ function HowItWorks() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-2xl border border-hairline bg-background p-8 md:p-12"
+            className="relative min-w-0 overflow-hidden rounded-2xl border border-hairline bg-background p-8 md:p-12"
           >
             <div className="pointer-events-none absolute inset-0 grid-bg opacity-25" />
             <div className="relative">
