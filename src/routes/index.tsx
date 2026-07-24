@@ -254,58 +254,69 @@ const heroEase = [0.22, 1, 0.36, 1] as const;
 function Hero() {
   return (
     <section id="home" className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 grid-bg opacity-40 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
-      <div className="relative mx-auto flex min-h-[92vh] max-w-6xl flex-col items-center px-6 pt-24 pb-20 md:pt-32">
-        <Reveal>
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-xs text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            Revenue operations infrastructure
-          </div>
-        </Reveal>
-        <Reveal delay={0.05}>
-          <h1 className="max-w-4xl text-balance text-center text-[2.5rem] font-semibold leading-[1.04] tracking-tight sm:text-5xl md:text-6xl lg:text-[76px] lg:leading-[1.02]">
-            The systems behind service{" "}
-            <span className="text-primary">businesses that scale.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.15}>
-          <p className="mt-8 max-w-2xl text-center text-[16px] leading-relaxed text-muted-foreground md:text-[19px]">
-            Solis builds the operational infrastructure that removes bottlenecks, automates the
-            repetitive work slowing your team down, and gives you complete visibility into how your
-            business actually runs.
-          </p>
-        </Reveal>
-        <Reveal delay={0.25}>
-          <div className="mt-10 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
-            <button
-              type="button"
-              onClick={() => smoothScrollTo("contact")}
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
-            >
-              Book a call
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => smoothScrollTo("audit")}
-              className="liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-foreground transition-transform hover:-translate-y-px"
-            >
-              Take the 2-min audit
-            </button>
-          </div>
-        </Reveal>
-        <Reveal delay={0.3}>
-          <p className="mt-6 max-w-md text-center text-[13px] text-muted-foreground">
-            No pressure, nothing to install — just a clear picture of where your clinic loses time.
-          </p>
-        </Reveal>
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 right-[-8%] h-[560px] w-[560px] rounded-full bg-primary/10 blur-[130px]" />
+        <div className="absolute inset-0 grid-bg opacity-40 [mask-image:radial-gradient(120%_75%_at_82%_10%,black_0%,transparent_58%)]" />
+      </div>
 
-        <div className="mt-16 w-full max-w-md">
-          <LiveOpsPanel />
+      <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-16 md:pt-28">
+        {/* Two columns: pitch + buttons on the left, animated graphic on the right */}
+        <div className="grid grid-cols-1 items-center gap-12 lg:min-h-[70vh] lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+          <div className="min-w-0 max-w-xl">
+            <Reveal>
+              <div className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-xs text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                Revenue operations infrastructure
+              </div>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <h1 className="mt-6 text-balance text-[2.5rem] font-semibold leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl lg:leading-[1.02]">
+                The systems behind service{" "}
+                <span className="text-primary">businesses that scale.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <p className="mt-6 max-w-lg text-[16px] leading-relaxed text-muted-foreground md:text-[18px]">
+                Solis builds the operational infrastructure that removes bottlenecks, automates the
+                repetitive work slowing your team down, and gives you complete visibility into how your
+                business actually runs.
+              </p>
+            </Reveal>
+            <Reveal delay={0.25}>
+              <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => smoothScrollTo("contact")}
+                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/25"
+                >
+                  Book a call
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => smoothScrollTo("audit")}
+                  className="liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-foreground transition-transform hover:-translate-y-px"
+                >
+                  Take the 2-min audit
+                </button>
+              </div>
+            </Reveal>
+            <Reveal delay={0.3}>
+              <p className="mt-6 max-w-md text-[13px] text-muted-foreground">
+                No pressure, nothing to install — just a clear picture of where your clinic loses time.
+              </p>
+            </Reveal>
+          </div>
+
+          {/* Animated graphic */}
+          <div className="min-w-0 w-full">
+            <LiveOpsPanel />
+          </div>
         </div>
 
-        <Reveal delay={0.2} className="mt-16 w-full">
-          <div className="mx-auto grid max-w-4xl grid-cols-3 gap-4 border-t border-hairline pt-8 text-sm sm:gap-6">
+        {/* Figures — below the hero as a whole, full width */}
+        <Reveal delay={0.1} className="mt-14 w-full">
+          <div className="grid grid-cols-3 gap-4 border-t border-hairline pt-8 text-sm sm:gap-6">
             <Stat k="< 60s" v="Lead response" />
             <Stat k="24/7" v="Operational uptime" />
             <Stat k="Live" v="Revenue reporting" />
@@ -352,7 +363,7 @@ function LiveOpsPanel() {
         uid += 1;
         return [entry, ...prev].slice(0, VISIBLE);
       });
-    }, 3600);
+    }, 2200);
     return () => clearInterval(t);
   }, []);
 
