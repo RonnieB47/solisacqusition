@@ -740,6 +740,52 @@ function Problem() {
             ))}
           </motion.div>
         </div>
+
+        <Reveal delay={0.15} className="mt-8">
+          <div className="relative overflow-hidden rounded-3xl border border-hairline bg-foreground p-8 text-background md:p-12">
+            <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_12%_15%,var(--primary)_0%,transparent_45%)]" />
+            <div className="relative grid gap-8 md:grid-cols-[1.1fr_1.9fr] md:items-center">
+              <div>
+                <div className="text-xs uppercase tracking-[0.2em] text-[color:var(--primary)]">
+                  The cost of doing nothing
+                </div>
+                <h3 className="mt-3 text-balance text-2xl font-semibold leading-tight tracking-tight md:text-[28px]">
+                  You&apos;re not paying for a system. You&apos;re already paying{" "}
+                  <span className="text-[color:var(--primary)]">without one</span>.
+                </h3>
+                <p className="mt-3 max-w-sm text-sm leading-relaxed text-background/60">
+                  The maths most clinics never run — bleeding out every month,
+                  before you&apos;ve earned a penny more.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-6 border-t border-background/15 pt-6 sm:grid-cols-3 md:border-l md:border-t-0 md:pl-10 md:pt-0">
+                {[
+                  {
+                    n: "10+ hrs",
+                    l: "a week on admin, reminders and DMs — not on clients",
+                  },
+                  {
+                    n: "£600+/mo",
+                    l: "bleeding on manual process alone (10 hrs × £15)",
+                  },
+                  {
+                    n: "1 in 3",
+                    l: "enquiries lost to whoever replied first",
+                  },
+                ].map((f) => (
+                  <div key={f.n}>
+                    <div className="text-3xl font-semibold tracking-tight text-[color:var(--primary)] md:text-[34px]">
+                      {f.n}
+                    </div>
+                    <div className="mt-2 text-[13px] leading-snug text-background/70">
+                      {f.l}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
