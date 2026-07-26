@@ -2348,6 +2348,28 @@ function Footer() {
           <p className="mt-3 max-w-xs text-xs leading-relaxed text-muted-foreground">
             Revenue operations infrastructure for modern service businesses.
           </p>
+          <a
+            href="https://www.instagram.com/ronnieboksh47/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Ronnie on Instagram"
+            className="mt-4 inline-flex size-8 items-center justify-center rounded-lg border border-hairline text-muted-foreground transition-colors hover:-translate-y-px hover:border-primary/40 hover:text-primary"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-[18px] w-[18px]"
+              aria-hidden
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5.5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
         </div>
         <FooterCol
           title="Explore"
