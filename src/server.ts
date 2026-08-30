@@ -44,8 +44,22 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+const CANONICAL_HOST = "solisacquisition.com";
+
+function redirectToCanonicalHost(request: Request): Response | undefined {
+  const url = new URL(request.url);
+  if (url.hostname === CANONICAL_HOST) return undefined;
+  url.hostname = CANONICAL_HOST;
+  url.protocol = "https:";
+  url.port = "";
+  return Response.redirect(url.toString(), 301);
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const redirect = redirectToCanonicalHost(request);
+    if (redirect) return redirect;
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
