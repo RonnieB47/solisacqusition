@@ -698,7 +698,7 @@ function Problem() {
     {
       icon: Settings2,
       title: "Manual admin",
-      desc: "Follow-ups, reminders, no-show chases, review requests, reporting — all of it lives in someone's head or across five tabs. It burns your team out, gets dropped when it's busy, and quietly caps how far you can grow.",
+      desc: "No-show follow-ups, past clients who've gone quiet, review requests, reminders — all of it depends on someone remembering to chase. Nothing brings a lapsed client back on its own, and nothing catches a gap in tomorrow's diary before it costs you a slot.",
     },
   ];
   return (
