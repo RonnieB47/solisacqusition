@@ -268,15 +268,15 @@ function Hero() {
             </Reveal>
             <Reveal delay={0.05}>
               <h1 className="mt-6 text-balance text-[2.5rem] font-semibold leading-[1.04] tracking-tight sm:text-5xl lg:text-6xl lg:leading-[1.02]">
-                The systems behind service{" "}
-                <span className="text-primary">businesses that scale.</span>
+                The automated backbone of{" "}
+                <span className="text-primary">businesses built to scale.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.15}>
               <p className="mt-6 max-w-lg text-[16px] leading-relaxed text-muted-foreground md:text-[18px]">
-                Solis builds the operational infrastructure that removes bottlenecks, automates the
-                repetitive work slowing your team down, and gives you complete visibility into how your
-                business actually runs.
+                Automated systems working behind the scenes of the clinic you already run. Everything
+                we build sits on top of your current setup. Nothing gets ripped out, nothing gets
+                broken.
               </p>
             </Reveal>
             <Reveal delay={0.25}>
