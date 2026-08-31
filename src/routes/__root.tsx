@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Solis — Backend Systems for Clinics & Service Businesses" },
+      { title: "Solis — AI-Powered Solutions for Clinics & Service Businesses" },
       {
         name: "description",
         content:
@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "Solis" },
       // Open Graph
       { property: "og:site_name", content: "Solis Acquisition" },
-      { property: "og:title", content: "Solis — Backend Systems for Clinics & Service Businesses" },
+      { property: "og:title", content: "Solis — AI-Powered Solutions for Clinics & Service Businesses" },
       {
         property: "og:description",
         content:
@@ -108,7 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:height", content: "630" },
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Solis — Backend Systems for Clinics & Service Businesses" },
+      { name: "twitter:title", content: "Solis — AI-Powered Solutions for Clinics & Service Businesses" },
       {
         name: "twitter:description",
         content:
