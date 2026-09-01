@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Activity,
@@ -1374,7 +1374,13 @@ function HowItWorks() {
           </p>
         </Reveal>
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-[220px_1fr]">
+        {/* Desktop: sticky scroll-driven progression through each stage */}
+        <div className="mt-16 hidden lg:block">
+          <StickyStages stages={stages} />
+        </div>
+
+        {/* Mobile/tablet: click-through tab rail */}
+        <div className="mt-16 grid gap-10 lg:hidden">
           {/* Stage rail */}
           <div className="relative min-w-0">
             <div className="absolute left-[19px] top-2 bottom-2 hidden w-px bg-hairline lg:block" />
@@ -1487,6 +1493,143 @@ function HowItWorks() {
         </div>
       </div>
     </section>
+  );
+}
+
+type Stage = {
+  when: string;
+  icon: typeof Compass;
+  title: string;
+  desc: string;
+  bullets: string[];
+};
+
+function StickyStages({ stages }: { stages: Stage[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ["start start", "end end"],
+  });
+  const rawIndex = useTransform(scrollYProgress, [0, 1], [0, stages.length - 1]);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    return rawIndex.on("change", (v) => {
+      const next = Math.min(stages.length - 1, Math.max(0, Math.round(v)));
+      setActive((prev) => (prev === next ? prev : next));
+    });
+  }, [rawIndex, stages.length]);
+
+  return (
+    <div ref={trackRef} style={{ height: `${stages.length * 100}vh` }} className="relative">
+      <div className="sticky top-24 grid gap-10 lg:grid-cols-[220px_1fr]">
+        {/* Stage rail */}
+        <div className="relative min-w-0">
+          <div className="absolute left-[19px] top-2 bottom-2 w-px bg-hairline" />
+          <motion.div
+            animate={{ height: `${((active + 1) / stages.length) * 100}%` }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute left-[19px] top-2 w-px bg-primary"
+          />
+          <ul className="flex flex-col gap-6">
+            {stages.map((s, i) => {
+              const isActive = i === active;
+              const isPassed = i <= active;
+              return (
+                <li key={s.when}>
+                  <div className="group relative flex items-center gap-3 whitespace-nowrap text-left">
+                    <span
+                      className={`relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full border text-xs font-semibold transition-all ${
+                        isPassed
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-hairline bg-background text-muted-foreground"
+                      }`}
+                    >
+                      0{i + 1}
+                    </span>
+                    <span
+                      className={`flex flex-col transition-colors ${
+                        isActive ? "text-foreground" : "text-muted-foreground"
+                      }`}
+                    >
+                      <span className="text-[11px] uppercase tracking-[0.18em]">{s.when}</span>
+                      <span className="text-sm font-medium">{s.title}</span>
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* Active stage detail */}
+        <div className="relative min-w-0 overflow-hidden rounded-2xl border border-hairline bg-background p-8 md:p-12">
+          <div className="pointer-events-none absolute inset-0 grid-bg opacity-25" />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="relative"
+            >
+              <div className="flex items-center justify-between">
+                <div className="inline-flex items-center gap-2 rounded-full border border-hairline bg-surface px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  {stages[active].when}
+                </div>
+                <div className="node-glow grid h-11 w-11 place-items-center rounded-xl border border-hairline bg-surface text-primary">
+                  {(() => {
+                    const Icon = stages[active].icon;
+                    return <Icon className="h-5 w-5" />;
+                  })()}
+                </div>
+              </div>
+              <h3 className="mt-6 text-2xl font-semibold tracking-tight md:text-3xl">
+                {stages[active].title}
+              </h3>
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                {stages[active].desc}
+              </p>
+              <motion.ul
+                variants={stagger}
+                initial="hidden"
+                animate="show"
+                className="mt-8 grid gap-3 sm:grid-cols-2"
+              >
+                {stages[active].bullets.map((b) => (
+                  <motion.li
+                    key={b}
+                    variants={fadeUp}
+                    className="flex items-center gap-3 rounded-xl border border-hairline bg-surface px-4 py-3 text-[13px] text-foreground/85"
+                  >
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
+                    {b}
+                  </motion.li>
+                ))}
+              </motion.ul>
+
+              <div className="mt-8 flex items-center justify-between border-t border-hairline pt-5 text-xs text-muted-foreground">
+                <span>
+                  Stage {active + 1} of {stages.length}
+                </span>
+                <div className="flex gap-1.5">
+                  {stages.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1 rounded-full transition-all ${
+                        i === active ? "w-6 bg-primary" : "w-2 bg-hairline"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
   );
 }
 
