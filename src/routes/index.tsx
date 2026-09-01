@@ -759,15 +759,15 @@ function Problem() {
                 {[
                   {
                     n: "10+ hrs",
-                    l: "a week on admin, reminders and DMs — not on clients",
+                    l: "typically spent a week on admin, reminders and handling inbound enquiries — not on clients",
                   },
                   {
                     n: "£600+/mo",
-                    l: "bleeding on manual process alone (10 hrs × £15)",
+                    l: "typically bleeding on manual process alone (10 hrs × £15)",
                   },
                   {
                     n: "1 in 3",
-                    l: "enquiries lost to whoever replied first",
+                    l: "enquiries typically lost to whoever replied first",
                   },
                 ].map((f) => (
                   <div key={f.n}>
