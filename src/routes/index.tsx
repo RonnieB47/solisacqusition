@@ -858,7 +858,6 @@ function WhatWeBuild() {
       features: [
         "Instant SMS replies",
         "Email automation",
-        "Booking flows",
         "Lead routing",
         "Missed call text-back",
       ],
@@ -886,7 +885,7 @@ function WhatWeBuild() {
         "Lead source reporting",
         "Response times",
         "Pipeline reporting",
-        "Revenue dashboards",
+        "Revenue visibility",
       ],
     },
   ];
@@ -943,90 +942,190 @@ function WhatWeBuild() {
   );
 }
 
+function IlloDots() {
+  return (
+    <g fill="var(--foreground)" opacity="0.08">
+      {Array.from({ length: 12 }).map((_, col) =>
+        Array.from({ length: 5 }).map((_, row) => (
+          <circle key={`${col}-${row}`} cx={20 + col * 34} cy={16 + row * 32} r="1.2" />
+        )),
+      )}
+    </g>
+  );
+}
+
 function SpeedIllo() {
   return (
     <svg viewBox="0 0 400 160" className="h-full w-full">
-      <g fill="none" stroke="currentColor" strokeWidth="1" className="text-foreground/15">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <line key={i} x1="0" x2="400" y1={i * 20} y2={i * 20} />
-        ))}
+      <defs>
+        <linearGradient id="speedGlow" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="speedPulse" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0" />
+          <stop offset="100%" stopColor="var(--primary)" stopOpacity="1" />
+        </linearGradient>
+        <filter id="speedShadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#0f172a" floodOpacity="0.12" />
+        </filter>
+      </defs>
+      <IlloDots />
+      <circle cx="330" cy="40" r="120" fill="url(#speedGlow)" />
+
+      {/* incoming enquiry card, tilted back */}
+      <g transform="translate(24 52) rotate(-4)" filter="url(#speedShadow)">
+        <rect width="168" height="52" rx="12" fill="var(--background)" stroke="var(--hairline)" />
+        <circle cx="24" cy="26" r="10" fill="var(--foreground)" opacity="0.08" />
+        <circle cx="24" cy="26" r="10" fill="none" stroke="var(--foreground)" strokeOpacity="0.2" />
+        <rect x="44" y="18" width="88" height="6" rx="3" fill="var(--foreground)" opacity="0.55" />
+        <rect x="44" y="30" width="60" height="5" rx="2.5" fill="var(--foreground)" opacity="0.22" />
       </g>
-      <rect x="30" y="40" width="130" height="30" rx="6" fill="var(--background)" stroke="var(--hairline)" />
-      <circle cx="46" cy="55" r="4" fill="var(--primary)" />
-      <rect x="58" y="49" width="80" height="4" rx="2" fill="var(--foreground)" opacity="0.6" />
-      <rect x="58" y="58" width="50" height="3" rx="1.5" fill="var(--foreground)" opacity="0.25" />
-      <path d="M160 55 L240 55" stroke="var(--primary)" strokeWidth="1.5" strokeDasharray="4 4" />
-      <circle cx="240" cy="55" r="18" fill="var(--primary)" opacity="0.12" />
-      <circle cx="240" cy="55" r="10" fill="var(--primary)" />
-      <path d="M235 55 L239 59 L246 51" stroke="white" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="270" y="90" width="110" height="46" rx="8" fill="var(--background)" stroke="var(--hairline)" />
-      <rect x="280" y="100" width="60" height="4" rx="2" fill="var(--foreground)" opacity="0.6" />
-      <rect x="280" y="110" width="90" height="3" rx="1.5" fill="var(--foreground)" opacity="0.2" />
-      <rect x="280" y="118" width="40" height="10" rx="4" fill="var(--primary)" />
+
+      {/* response beam */}
+      <path d="M196 78 L266 62" stroke="url(#speedPulse)" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="266" cy="62" r="3" fill="var(--primary)" />
+
+      {/* instant-reply badge, front layer */}
+      <g transform="translate(276 30)" filter="url(#speedShadow)">
+        <rect width="104" height="64" rx="14" fill="var(--primary)" />
+        <circle cx="30" cy="32" r="16" fill="white" fillOpacity="0.16" />
+        <path
+          d="M23 32 L28 37 L38 25"
+          stroke="white"
+          strokeWidth="2.4"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <rect x="52" y="21" width="38" height="5" rx="2.5" fill="white" fillOpacity="0.85" />
+        <rect x="52" y="31" width="26" height="4" rx="2" fill="white" fillOpacity="0.5" />
+        <rect x="52" y="41" width="30" height="4" rx="2" fill="white" fillOpacity="0.5" />
+      </g>
+      <text
+        x="328"
+        y="112"
+        textAnchor="middle"
+        fontSize="10"
+        fontWeight="600"
+        letterSpacing="0.04em"
+        fill="var(--foreground)"
+        opacity="0.45"
+      >
+        &lt; 30 SECONDS
+      </text>
     </svg>
   );
 }
 
 function WorkflowIllo() {
+  const nodes: Array<{ x: number; y: number; label: string; active?: boolean }> = [
+    { x: 54, y: 80, label: "Enquiry", active: true },
+    { x: 176, y: 42, label: "Qualify" },
+    { x: 176, y: 118, label: "Nurture" },
+    { x: 320, y: 80, label: "Book" },
+  ];
   return (
     <svg viewBox="0 0 400 160" className="h-full w-full">
-      <g stroke="var(--hairline)" fill="var(--background)">
-        <rect x="20" y="60" width="90" height="40" rx="8" />
-        <rect x="155" y="30" width="90" height="40" rx="8" />
-        <rect x="155" y="90" width="90" height="40" rx="8" />
-        <rect x="290" y="60" width="90" height="40" rx="8" />
+      <defs>
+        <filter id="wfShadow" x="-60%" y="-60%" width="220%" height="220%">
+          <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#0f172a" floodOpacity="0.1" />
+        </filter>
+      </defs>
+      <IlloDots />
+
+      <g fill="none" stroke="var(--primary)" strokeWidth="1.4" opacity="0.55">
+        <path d="M78 80 C 112 80, 118 46, 152 44" />
+        <path d="M78 80 C 112 80, 118 114, 152 116" />
+        <path d="M200 44 C 240 46, 250 76, 296 79" />
+        <path d="M200 116 C 240 114, 250 82, 296 81" />
       </g>
-      <g stroke="var(--primary)" fill="none" strokeWidth="1.4">
-        <path d="M110 80 C 130 80, 135 50, 155 50" />
-        <path d="M110 80 C 130 80, 135 110, 155 110" />
-        <path d="M245 50 C 265 50, 270 80, 290 80" />
-        <path d="M245 110 C 265 110, 270 80, 290 80" />
-      </g>
-      {[
-        [65, 80],
-        [200, 50],
-        [200, 110],
-        [335, 80],
-      ].map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="4" fill="var(--primary)" />
+
+      {nodes.map((n) => (
+        <g key={n.label} transform={`translate(${n.x} ${n.y})`} filter="url(#wfShadow)">
+          <rect
+            x="-38"
+            y="-22"
+            width="76"
+            height="44"
+            rx="12"
+            fill={n.active ? "var(--primary)" : "var(--background)"}
+            stroke={n.active ? "none" : "var(--hairline)"}
+          />
+          <text
+            textAnchor="middle"
+            y="5"
+            fontSize="11"
+            fontWeight="600"
+            fill={n.active ? "white" : "var(--foreground)"}
+            fillOpacity={n.active ? 1 : 0.8}
+          >
+            {n.label}
+          </text>
+        </g>
       ))}
-      <text x="65" y="83" textAnchor="middle" fontSize="9" fill="var(--foreground)" opacity="0.7">
-        Enquiry
-      </text>
-      <text x="200" y="53" textAnchor="middle" fontSize="9" fill="var(--foreground)" opacity="0.7">
-        Qualify
-      </text>
-      <text x="200" y="113" textAnchor="middle" fontSize="9" fill="var(--foreground)" opacity="0.7">
-        Nurture
-      </text>
-      <text x="335" y="83" textAnchor="middle" fontSize="9" fill="var(--foreground)" opacity="0.7">
-        Book
-      </text>
+
+      {[
+        [78, 80],
+        [200, 44],
+        [200, 116],
+        [296, 80],
+      ].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="3" fill="var(--primary)" />
+      ))}
     </svg>
   );
 }
 
 function ReportIllo() {
+  const bars = [42, 66, 54, 88, 60, 78, 46, 96, 70, 58];
   return (
     <svg viewBox="0 0 400 160" className="h-full w-full">
-      <g fill="var(--background)" stroke="var(--hairline)">
-        <rect x="20" y="30" width="360" height="100" rx="10" />
-      </g>
-      <g>
-        {[60, 100, 80, 130, 90, 120, 70, 140, 110].map((h, i) => (
+      <defs>
+        <linearGradient id="barFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--primary)" />
+          <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.65" />
+        </linearGradient>
+        <filter id="reportShadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="10" stdDeviation="12" floodColor="#0f172a" floodOpacity="0.1" />
+        </filter>
+      </defs>
+      <IlloDots />
+
+      <g transform="translate(24 22)" filter="url(#reportShadow)">
+        <rect width="352" height="112" rx="14" fill="var(--background)" stroke="var(--hairline)" />
+        {[28, 56, 84].map((y) => (
+          <line key={y} x1="18" x2="334" y1={y} y2={y} stroke="var(--hairline)" strokeOpacity="0.6" />
+        ))}
+        {bars.map((h, i) => (
           <rect
             key={i}
-            x={40 + i * 38}
-            y={130 - h * 0.6}
-            width="20"
-            height={h * 0.6}
-            rx="3"
-            fill={i === 7 ? "var(--primary)" : "var(--foreground)"}
-            opacity={i === 7 ? 1 : 0.15}
+            x={26 + i * 32}
+            y={98 - h * 0.62}
+            width="16"
+            height={h * 0.62}
+            rx="4"
+            fill={i === 7 ? "url(#barFill)" : "var(--foreground)"}
+            opacity={i === 7 ? 1 : 0.12}
           />
         ))}
+        <line x1="18" y1="98" x2="334" y2="98" stroke="var(--hairline)" />
       </g>
-      <line x1="30" y1="130" x2="380" y2="130" stroke="var(--hairline)" />
+
+      <g transform="translate(272 8)" filter="url(#reportShadow)">
+        <rect width="92" height="30" rx="15" fill="var(--primary)" />
+        <path
+          d="M14 16 L20 22 L28 10"
+          stroke="white"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <text x="42" y="20" fontSize="11" fontWeight="700" fill="white">
+          +18%
+        </text>
+      </g>
     </svg>
   );
 }
