@@ -690,8 +690,8 @@ function Problem() {
     },
     {
       icon: GaugeCircle,
-      title: "No visibility",
-      desc: "You can't see which channels bring in paying clients, where bookings drop off, or which treatments and offers actually make money — so decisions get made on gut feel instead of the numbers.",
+      title: "Scattered across too many tools",
+      desc: "Booking, payments, messaging and reminders live in separate logins with no shared view — so you can't see which channels bring in paying clients, where bookings drop off, or what actually makes money. On top of the mess, you're paying for every one of those tools separately.",
     },
     {
       icon: Settings2,
@@ -753,7 +753,7 @@ function Problem() {
                   before you&apos;ve earned a penny more.
                 </p>
               </div>
-              <div className="grid grid-cols-1 gap-6 border-t border-background/15 pt-6 sm:grid-cols-3 md:border-l md:border-t-0 md:pl-10 md:pt-0">
+              <div className="grid grid-cols-1 gap-6 border-t border-background/15 pt-6 sm:grid-cols-2 md:border-l md:border-t-0 md:pl-10 md:pt-0">
                 {[
                   {
                     n: "10+ hrs",
@@ -766,6 +766,10 @@ function Problem() {
                   {
                     n: "1 in 3",
                     l: "enquiries typically lost to whoever replied first",
+                  },
+                  {
+                    n: "3-5 tools",
+                    l: "typically stacked to cover booking, payments and messaging separately — each with its own bill",
                   },
                 ].map((f) => (
                   <div key={f.n}>
@@ -875,8 +879,8 @@ function WhatWeBuild() {
     },
     {
       icon: BarChart3,
-      title: "Reporting & Revenue Intelligence",
-      desc: "Live operational visibility across every stage of the customer journey.",
+      title: "One Dashboard, Not a Software Stack",
+      desc: "Every stage of the customer journey hosted in one in-house dashboard instead of scattered across separate tools — live operational visibility without the extra logins or the extra bills.",
       illo: <ReportIllo />,
       features: [
         "Booking conversion",
