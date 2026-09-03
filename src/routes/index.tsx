@@ -1081,6 +1081,15 @@ function WorkflowIllo() {
 
 function ReportIllo() {
   const bars = [42, 66, 54, 88, 60, 78, 46, 96, 70, 58];
+  const navItems = [
+    { label: "Overview", active: true },
+    { label: "Calendar", active: false },
+    { label: "Appointments", active: false },
+    { label: "Enquiries", active: false },
+    { label: "Clients", active: false },
+    { label: "Payments", active: false },
+    { label: "Insights", active: false },
+  ];
   return (
     <svg viewBox="0 0 400 160" className="h-full w-full">
       <defs>
@@ -1094,37 +1103,64 @@ function ReportIllo() {
       </defs>
       <IlloDots />
 
-      <g transform="translate(24 22)" filter="url(#reportShadow)">
-        <rect width="352" height="112" rx="14" fill="var(--background)" stroke="var(--hairline)" />
-        {[28, 56, 84].map((y) => (
-          <line key={y} x1="18" x2="334" y1={y} y2={y} stroke="var(--hairline)" strokeOpacity="0.6" />
+      {/* dashboard frame: sidebar of real nav tabs + main panel, one in-house app */}
+      <g transform="translate(24 16)" filter="url(#reportShadow)">
+        <rect width="352" height="120" rx="14" fill="var(--background)" stroke="var(--hairline)" />
+
+        {/* sidebar */}
+        <rect width="120" height="120" rx="14" fill="var(--foreground)" opacity="0.04" />
+        <rect x="120" width="1" height="120" fill="var(--hairline)" />
+        <circle cx="18" cy="16" r="4.5" fill="var(--primary)" />
+        <text x="28" y="19.5" fontSize="8" fontWeight="700" fill="var(--foreground)" opacity="0.7">
+          Clinic OS
+        </text>
+        {navItems.map((n, i) => (
+          <g key={n.label} transform={`translate(11 ${33 + i * 12.4})`}>
+            {n.active && <rect x="-3" y="-7.5" width="104" height="13.5" rx="5" fill="var(--primary)" opacity="0.12" />}
+            <text
+              fontSize="7.6"
+              fontWeight={n.active ? 700 : 500}
+              fill={n.active ? "var(--primary)" : "var(--foreground)"}
+              opacity={n.active ? 1 : 0.45}
+            >
+              {n.label}
+            </text>
+          </g>
         ))}
-        {bars.map((h, i) => (
-          <rect
-            key={i}
-            x={26 + i * 32}
-            y={98 - h * 0.62}
-            width="16"
-            height={h * 0.62}
-            rx="4"
-            fill={i === 7 ? "url(#barFill)" : "var(--foreground)"}
-            opacity={i === 7 ? 1 : 0.12}
-          />
-        ))}
-        <line x1="18" y1="98" x2="334" y2="98" stroke="var(--hairline)" />
+
+        {/* main panel: bar chart */}
+        <g transform="translate(142 16)">
+          {[16, 40, 64].map((y) => (
+            <line key={y} x1="0" x2="198" y1={y} y2={y} stroke="var(--hairline)" strokeOpacity="0.6" />
+          ))}
+          {bars.map((h, i) => (
+            <rect
+              key={i}
+              x={i * 19.6}
+              y={80 - h * 0.51}
+              width="10"
+              height={h * 0.51}
+              rx="3"
+              fill={i === 7 ? "url(#barFill)" : "var(--foreground)"}
+              opacity={i === 7 ? 1 : 0.12}
+            />
+          ))}
+          <line x1="0" y1="80" x2="198" y2="80" stroke="var(--hairline)" />
+        </g>
       </g>
 
-      <g transform="translate(272 8)" filter="url(#reportShadow)">
-        <rect width="92" height="30" rx="15" fill="var(--primary)" />
+      {/* live percentage badge, floating over the panel */}
+      <g transform="translate(288 2)" filter="url(#reportShadow)">
+        <rect width="88" height="28" rx="14" fill="var(--primary)" />
         <path
-          d="M14 16 L20 22 L28 10"
+          d="M13 15 L18.5 20.5 L26 9"
           stroke="white"
           strokeWidth="2"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <text x="42" y="20" fontSize="11" fontWeight="700" fill="white">
+        <text x="38" y="19" fontSize="10" fontWeight="700" fill="white">
           +18%
         </text>
       </g>
